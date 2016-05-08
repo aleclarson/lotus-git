@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "currentBranch.js",
+  "sourceRoot": "../../../src/core",
+  "sources": [
+    "currentBranch.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA,IAAA;;AAAE,aAAe,OAAA,CAAQ,YAAR;;AAEjB,IAAA,GAAO,OAAA,CAAQ,QAAR;;AAEP,MAAM,CAAC,OAAP,GAAiB,SAAC,UAAD;EACf,UAAA,CAAW,UAAX,EAAuB,MAAvB;SACA,IAAA,CAAK,WAAL,EAAkB,CAAE,cAAF,EAAkB,MAAlB,CAAlB,EAA8C;IAAA,GAAA,EAAK,UAAL;GAA9C;AAFe"
+}

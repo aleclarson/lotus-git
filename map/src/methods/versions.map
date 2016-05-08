@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "versions.js",
+  "sourceRoot": "../../../src/methods",
+  "sources": [
+    "versions.coffee"
+  ],
+  "names": [],
+  "mappings": ""
+}
