@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "getTags.js",
+  "sourceRoot": "../../../src/core",
+  "sources": [
+    "getTags.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA,IAAA;;AAAA,IAAA,GAAO,OAAA,CAAQ,MAAR;;AAEP,MAAM,CAAC,OAAP,GAAiB,SAAC,UAAD;SACf,IAAA,CAAK,SAAL,EAAgB;IAAA,GAAA,EAAK,UAAL;GAAhB,CACA,CAAC,IADD,CACM,SAAC,MAAD;AACJ,QAAA;IAAA,IAAA,GAAO,MAAM,CAAC,KAAP,CAAa,GAAG,CAAC,EAAjB;IACP,IAAI,CAAC,KAAL,CAAA;AACA,WAAO;EAHH,CADN;AADe"
+}

@@ -3,7 +3,7 @@ Path = require "path"
 sync = require "sync"
 Q = require "q"
 
-git = require "../core"
+getBranchNames = require "../core/getBranchNames"
 
 module.exports = (options) ->
 
@@ -13,7 +13,7 @@ module.exports = (options) ->
 
   if modulePath
     modulePath = Module.resolvePath modulePath
-    moduleName = Path.relative lotus.path, modulePath
+    moduleName = Path.basename modulePath
     mod = Module moduleName
     printBranches mod
     .then -> process.exit()
@@ -27,7 +27,7 @@ module.exports = (options) ->
 
 printBranches = (mod) ->
 
-  git.branches mod.path
+  getBranchNames mod.path
 
   .then (branches) ->
     return if branches.length is 0

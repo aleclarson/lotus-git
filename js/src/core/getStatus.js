@@ -1,10 +1,10 @@
-var Finder, STATUS_REGEX, colorByStatus, exec, exports, findNewPath, findPath, findStagingStatus, findWorkingStatus, statusBySymbol, sync;
+var Finder, STATUS_REGEX, exec, findNewPath, findPath, findStagingStatus, findWorkingStatus, statusBySymbol, sync;
 
 Finder = require("finder");
 
 sync = require("sync");
 
-exec = require("./exec");
+exec = require("exec");
 
 STATUS_REGEX = /^[\s]*([ARMD\s\?]{1})([ARMD\s\?]{1}) ([^\s]+)( \-\> ([^\s]+))?/;
 
@@ -37,11 +37,11 @@ statusBySymbol = {
   "?": "untracked"
 };
 
-module.exports = exports = function(modulePath, options) {
+module.exports = function(modulePath, options) {
   if (options == null) {
     options = {};
   }
-  return exec("status", ["--porcelain"], {
+  return exec("git status --porcelain", {
     cwd: modulePath
   }).then(function(stdout) {
     var lines, results;
@@ -97,60 +97,4 @@ module.exports = exports = function(modulePath, options) {
   });
 };
 
-exports.printPaths = function(status, color, files) {
-  var file, i, len;
-  if (files.length === 0) {
-    return;
-  }
-  log.moat(1);
-  log[color](status);
-  log.plusIndent(2);
-  for (i = 0, len = files.length; i < len; i++) {
-    file = files[i];
-    log.moat(0);
-    if (file.newPath) {
-      log.gray.dim(file.oldPath);
-      log.white(" -> ");
-      log.gray.dim(file.newPath);
-    } else {
-      log.gray.dim(file.path);
-    }
-  }
-  log.popIndent();
-  return log.moat(1);
-};
-
-colorByStatus = {
-  added: "green",
-  modified: "yellow",
-  renamed: "green",
-  deleted: "red",
-  untracked: "cyan"
-};
-
-exports.printModuleStatus = function(moduleName, results) {
-  var files, key, status, value;
-  if (!isType(results, Object)) {
-    return;
-  }
-  log.pushIndent(2);
-  log.moat(1);
-  log.bold(moduleName);
-  log.plusIndent(2);
-  for (key in results) {
-    value = results[key];
-    if (isType(value, Array)) {
-      exports.printPaths(key, colorByStatus[key], value);
-      log.popIndent();
-      continue;
-    }
-    for (status in value) {
-      files = value[status];
-      exports.printPaths(key + "." + status, colorByStatus[status], files);
-    }
-  }
-  log.popIndent();
-  return log.moat(1);
-};
-
-//# sourceMappingURL=../../../map/src/core/status.map
+//# sourceMappingURL=../../../map/src/core/getStatus.map

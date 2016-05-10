@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "getBranchName.js",
+  "sourceRoot": "../../../src/core",
+  "sources": [
+    "getBranchName.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA,IAAA;;AAAE,aAAe,OAAA,CAAQ,YAAR;;AAEjB,IAAA,GAAO,OAAA,CAAQ,MAAR;;AAEP,MAAM,CAAC,OAAP,GAAiB,SAAC,UAAD;EACf,UAAA,CAAW,UAAX,EAAuB,MAAvB;SACA,IAAA,CAAK,iCAAL,EAAwC;IAAA,GAAA,EAAK,UAAL;GAAxC;AAFe"
+}

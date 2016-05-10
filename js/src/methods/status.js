@@ -1,4 +1,4 @@
-var Path, Q, errorConfig, git, isType, sync;
+var Path, Q, errorConfig, getStatus, isType, printStatus, sync;
 
 isType = require("type-utils").isType;
 
@@ -8,7 +8,9 @@ sync = require("sync");
 
 Q = require("q");
 
-git = require("../core");
+printStatus = require("../core/printStatus");
+
+getStatus = require("../core/getStatus");
 
 module.exports = function(options) {
   var Module, config, mods, moduleName, modulePath;
@@ -17,8 +19,8 @@ module.exports = function(options) {
   if (modulePath) {
     modulePath = Module.resolvePath(modulePath);
     moduleName = Path.relative(lotus.path, modulePath);
-    git.status(modulePath).then(function(results) {
-      return git.status.printModuleStatus(moduleName, results);
+    getStatus(modulePath).then(function(results) {
+      return printStatus(moduleName, results);
     }).fail(function(error) {
       log.moat(1);
       log.red(moduleName);
@@ -39,7 +41,7 @@ module.exports = function(options) {
     log.moat(1);
   }
   return Q.all(sync.map(mods, function(mod) {
-    return git.status(mod.path, config).then(function(results) {
+    return getStatus(mod.path, config).then(function(results) {
       if (config.raw) {
         if (!results) {
           return;
@@ -48,7 +50,7 @@ module.exports = function(options) {
         log.bold(mod.name);
         return;
       }
-      return git.status.printModuleStatus(mod.name, results);
+      return printStatus(mod.name, results);
     }).fail(function(error) {
       return mod.reportError(error, errorConfig);
     });

@@ -5,7 +5,8 @@ Path = require "path"
 sync = require "sync"
 Q = require "q"
 
-git = require "../core"
+printStatus = require "../core/printStatus"
+getStatus = require "../core/getStatus"
 
 module.exports = (options) ->
 
@@ -18,10 +19,10 @@ module.exports = (options) ->
     modulePath = Module.resolvePath modulePath
     moduleName = Path.relative lotus.path, modulePath
 
-    git.status modulePath
+    getStatus modulePath
 
     .then (results) ->
-      git.status.printModuleStatus moduleName, results
+      printStatus moduleName, results
 
     .fail (error) ->
       log.moat 1
@@ -48,7 +49,7 @@ module.exports = (options) ->
 
   Q.all sync.map mods, (mod) ->
 
-    git.status mod.path, config
+    getStatus mod.path, config
 
     .then (results) ->
 
@@ -58,7 +59,7 @@ module.exports = (options) ->
         log.bold mod.name
         return
 
-      git.status.printModuleStatus mod.name, results
+      printStatus mod.name, results
 
     .fail (error) ->
       mod.reportError error, errorConfig

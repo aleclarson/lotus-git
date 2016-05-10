@@ -6,11 +6,11 @@ Finder = require("finder");
 
 sync = require("sync");
 
-exec = require("./exec");
+exec = require("exec");
 
 module.exports = function(modulePath) {
   assertType(modulePath, String);
-  return exec("branch", {
+  return exec("git branch", {
     cwd: modulePath
   }).then(function(stdout) {
     var branches, findName, lines;
@@ -33,4 +33,4 @@ module.exports = function(modulePath) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/core/branches.map
+//# sourceMappingURL=../../../map/src/core/getBranchNames.map

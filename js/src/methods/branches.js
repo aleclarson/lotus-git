@@ -1,4 +1,4 @@
-var Path, Q, errorConfig, git, printBranches, sync;
+var Path, Q, errorConfig, getBranchNames, printBranches, sync;
 
 Path = require("path");
 
@@ -6,7 +6,7 @@ sync = require("sync");
 
 Q = require("q");
 
-git = require("../core");
+getBranchNames = require("../core/getBranchNames");
 
 module.exports = function(options) {
   var Module, mod, mods, moduleName, modulePath;
@@ -14,7 +14,7 @@ module.exports = function(options) {
   modulePath = options._.shift();
   if (modulePath) {
     modulePath = Module.resolvePath(modulePath);
-    moduleName = Path.relative(lotus.path, modulePath);
+    moduleName = Path.basename(modulePath);
     mod = Module(moduleName);
     printBranches(mod).then(function() {
       return process.exit();
@@ -28,7 +28,7 @@ module.exports = function(options) {
 };
 
 printBranches = function(mod) {
-  return git.branches(mod.path).then(function(branches) {
+  return getBranchNames(mod.path).then(function(branches) {
     if (branches.length === 0) {
       return;
     }

@@ -1,8 +1,7 @@
 
 Finder = require "finder"
 sync = require "sync"
-
-exec = require "./exec"
+exec = require "exec"
 
 STATUS_REGEX = /^[\s]*([ARMD\s\?]{1})([ARMD\s\?]{1}) ([^\s]+)( \-\> ([^\s]+))?/
 # RENAME_REGEX = /^[\s]*[ARMD\s\?]{2} [^\s]+(\-\> ([^\s]+))?/
@@ -20,9 +19,9 @@ statusBySymbol =
   " ": "unmodified"
   "?": "untracked"
 
-module.exports = exports = (modulePath, options = {}) ->
+module.exports = (modulePath, options = {}) ->
 
-  exec "status", [ "--porcelain" ], cwd: modulePath
+  exec "git status --porcelain", cwd: modulePath
 
   .then (stdout) ->
 
@@ -71,48 +70,3 @@ module.exports = exports = (modulePath, options = {}) ->
       files.push file
 
     return results
-
-exports.printPaths = (status, color, files) ->
-  return if files.length is 0
-  log.moat 1
-  log[color] status
-  log.plusIndent 2
-  for file in files
-    log.moat 0
-    if file.newPath
-      log.gray.dim file.oldPath
-      log.white " -> "
-      log.gray.dim file.newPath
-    else
-      log.gray.dim file.path
-  log.popIndent()
-  log.moat 1
-
-colorByStatus =
-  added: "green"
-  modified: "yellow"
-  renamed: "green"
-  deleted: "red"
-  untracked: "cyan"
-
-exports.printModuleStatus = (moduleName, results) ->
-
-  return unless isType results, Object
-
-  log.pushIndent 2
-  log.moat 1
-  log.bold moduleName
-  log.plusIndent 2
-
-  for key, value of results
-
-    if isType value, Array
-      exports.printPaths key, colorByStatus[key], value
-      log.popIndent()
-      continue
-
-    for status, files of value
-      exports.printPaths key + "." + status, colorByStatus[status], files
-
-  log.popIndent()
-  log.moat 1

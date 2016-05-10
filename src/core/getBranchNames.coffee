@@ -3,14 +3,13 @@
 
 Finder = require "finder"
 sync = require "sync"
-
-exec = require "./exec"
+exec = require "exec"
 
 module.exports = (modulePath) ->
 
   assertType modulePath, String
 
-  exec "branch", cwd: modulePath
+  exec "git branch", cwd: modulePath
 
   .then (stdout) ->
 
