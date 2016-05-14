@@ -1,6 +1,8 @@
-var Finder, STATUS_REGEX, exec, findNewPath, findPath, findStagingStatus, findWorkingStatus, statusBySymbol, sync;
+var Finder, STATUS_REGEX, assert, exec, findNewPath, findPath, findStagingStatus, findWorkingStatus, statusBySymbol, sync;
 
 Finder = require("finder");
+
+assert = require("assert");
 
 sync = require("sync");
 

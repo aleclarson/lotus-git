@@ -1,6 +1,8 @@
-var Path, Q, errorConfig, getStatus, isType, printStatus, sync;
+var ErrorMap, Path, Q, errors, getStatus, isType, printStatus, sync;
 
-isType = require("type-utils").isType;
+ErrorMap = require("ErrorMap");
+
+isType = require("isType");
 
 Path = require("path");
 
@@ -52,7 +54,9 @@ module.exports = function(options) {
       }
       return printStatus(mod.name, results);
     }).fail(function(error) {
-      return mod.reportError(error, errorConfig);
+      return errors.resolve(error, function() {
+        return log.yellow(mod.name);
+      });
     });
   })).then(function() {
     if (config.raw) {
@@ -62,8 +66,8 @@ module.exports = function(options) {
   }).done();
 };
 
-errorConfig = {
+errors = ErrorMap({
   quiet: ["fatal: Not a git repository (or any of the parent directories): .git"]
-};
+});
 
 //# sourceMappingURL=../../../map/src/methods/status.map

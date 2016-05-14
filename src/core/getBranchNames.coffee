@@ -1,6 +1,5 @@
 
-{ assertType } = require "type-utils"
-
+assertType = require "assert"
 Finder = require "finder"
 sync = require "sync"
 exec = require "exec"

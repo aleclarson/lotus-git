@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "upgrade.js",
+  "sourceRoot": "../../../src/methods",
+  "sources": [
+    "upgrade.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA,IAAA;;AAAA,IAAA,GAAO,OAAA,CAAQ,MAAR;;AAEP,MAAM,CAAC,OAAP,GAAiB,SAAC,OAAD,GAAA;;AAejB,MAAA,GAAS,QAAA,CAAA"
+}

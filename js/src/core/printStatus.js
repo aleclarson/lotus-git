@@ -1,4 +1,6 @@
-var colorByStatus, printPaths;
+var colorByStatus, isType, printPaths;
+
+isType = require("isType");
 
 colorByStatus = {
   added: "green",

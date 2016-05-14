@@ -1,5 +1,6 @@
 
 Finder = require "finder"
+assert = require "assert"
 sync = require "sync"
 exec = require "exec"
 

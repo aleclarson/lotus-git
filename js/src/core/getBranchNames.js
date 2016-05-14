@@ -1,6 +1,6 @@
 var Finder, assertType, exec, sync;
 
-assertType = require("type-utils").assertType;
+assertType = require("assert");
 
 Finder = require("finder");
 

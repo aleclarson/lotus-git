@@ -1,4 +1,6 @@
 
+isType = require "isType"
+
 colorByStatus =
   added: "green"
   modified: "yellow"

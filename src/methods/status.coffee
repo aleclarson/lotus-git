@@ -1,6 +1,6 @@
 
-{ isType } = require "type-utils"
-
+ErrorMap = require "ErrorMap"
+isType = require "isType"
 Path = require "path"
 sync = require "sync"
 Q = require "q"
@@ -62,7 +62,8 @@ module.exports = (options) ->
       printStatus mod.name, results
 
     .fail (error) ->
-      mod.reportError error, errorConfig
+      errors.resolve error, ->
+        log.yellow mod.name
 
   .then ->
 
@@ -73,7 +74,8 @@ module.exports = (options) ->
 
   .done()
 
-errorConfig =
+errors = ErrorMap
+
   quiet: [
     "fatal: Not a git repository (or any of the parent directories): .git"
   ]
