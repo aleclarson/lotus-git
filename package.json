@@ -18,6 +18,7 @@
     "in-array": "aleclarson/in-array#1.0.0",
     "io": "aleclarson/io#1.0.0",
     "isType": "aleclarson/isType#1.0.0",
+    "log": "aleclarson/log#1.0.0",
     "q": "aleclarson/q#1.0.0",
     "sync": "aleclarson/sync#1.0.0",
     "type-utils": "aleclarson/type-utils#1.0.0"

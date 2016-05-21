@@ -1,4 +1,4 @@
-var ErrorMap, Path, Q, errors, getStatus, isType, printStatus, sync;
+var ErrorMap, Path, Q, errors, getStatus, isType, log, printStatus, sync;
 
 ErrorMap = require("ErrorMap");
 
@@ -7,6 +7,8 @@ isType = require("isType");
 Path = require("path");
 
 sync = require("sync");
+
+log = require("log");
 
 Q = require("q");
 
@@ -21,7 +23,7 @@ module.exports = function(options) {
   if (modulePath) {
     modulePath = Module.resolvePath(modulePath);
     moduleName = Path.relative(lotus.path, modulePath);
-    getStatus(modulePath).then(function(results) {
+    return getStatus(modulePath).then(function(results) {
       return printStatus(moduleName, results);
     }).fail(function(error) {
       log.moat(1);
@@ -29,10 +31,7 @@ module.exports = function(options) {
       log.moat(0);
       log.gray.dim(error.stack);
       return log.moat(1);
-    }).then(function() {
-      return process.exit();
-    }).done();
-    return;
+    });
   }
   config = {
     raw: options.names === true
@@ -60,10 +59,9 @@ module.exports = function(options) {
     });
   })).then(function() {
     if (config.raw) {
-      log.moat(1);
+      return log.moat(1);
     }
-    return process.exit();
-  }).done();
+  });
 };
 
 errors = ErrorMap({

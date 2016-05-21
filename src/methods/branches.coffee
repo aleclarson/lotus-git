@@ -1,6 +1,7 @@
 
 Path = require "path"
 sync = require "sync"
+log = require "log"
 Q = require "q"
 
 getBranchNames = require "../core/getBranchNames"
@@ -15,15 +16,11 @@ module.exports = (options) ->
     modulePath = Module.resolvePath modulePath
     moduleName = Path.basename modulePath
     mod = Module moduleName
-    printBranches mod
-    .then -> process.exit()
-    .done()
-    return
+    return printBranches mod
 
   mods = Module.crawl lotus.path
-  Q.all sync.map mods, printBranches
-  .then -> process.exit()
-  .done()
+  sync.reduce mods, Q(), (promise, mod) ->
+    promise.then -> printBranches mod
 
 printBranches = (mod) ->
 

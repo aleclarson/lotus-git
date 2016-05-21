@@ -1,6 +1,8 @@
-var colorByStatus, isType, printPaths;
+var colorByStatus, isType, log, printPaths;
 
 isType = require("isType");
+
+log = require("log");
 
 colorByStatus = {
   added: "green",

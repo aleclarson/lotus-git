@@ -1,12 +1,14 @@
-var Path, Q, exec, getTags, isType, sync;
+var Path, Q, exec, getTags, isType, log, sync;
 
-isType = require("type-utils").isType;
+isType = require("isType");
 
 Path = require("path");
 
 sync = require("sync");
 
 exec = require("exec");
+
+log = require("log");
 
 Q = require("q");
 
@@ -41,9 +43,7 @@ module.exports = function(options) {
       log.white(" tags!");
       return log.moat(1);
     });
-  }).then(function() {
-    return process.exit();
-  }).done();
+  });
 };
 
 //# sourceMappingURL=../../../map/src/methods/deleteAllTags.map

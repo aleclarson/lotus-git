@@ -1,9 +1,9 @@
 
-{ isType } = require "type-utils"
-
+isType = require "isType"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
+log = require "log"
 Q = require "q"
 
 getTags = require "../core/getTags"
@@ -40,8 +40,3 @@ module.exports = (options) ->
       log.red tags.length
       log.white " tags!"
       log.moat 1
-
-  .then ->
-    process.exit()
-
-  .done()

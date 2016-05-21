@@ -1,6 +1,8 @@
-var exec;
+var exec, log;
 
 exec = require("exec");
+
+log = require("log");
 
 module.exports = function(modulePath) {
   return exec("git tag", {

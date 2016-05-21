@@ -1,5 +1,6 @@
 
 exec = require "exec"
+log = require "log"
 
 module.exports = (modulePath) ->
   exec "git tag", cwd: modulePath

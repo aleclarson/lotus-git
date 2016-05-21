@@ -3,6 +3,7 @@ ErrorMap = require "ErrorMap"
 isType = require "isType"
 Path = require "path"
 sync = require "sync"
+log = require "log"
 Q = require "q"
 
 printStatus = require "../core/printStatus"
@@ -19,7 +20,7 @@ module.exports = (options) ->
     modulePath = Module.resolvePath modulePath
     moduleName = Path.relative lotus.path, modulePath
 
-    getStatus modulePath
+    return getStatus modulePath
 
     .then (results) ->
       printStatus moduleName, results
@@ -30,12 +31,6 @@ module.exports = (options) ->
       log.moat 0
       log.gray.dim error.stack
       log.moat 1
-
-    .then -> process.exit()
-
-    .done()
-
-    return
 
   config =
     raw: options.names is yes
@@ -66,13 +61,8 @@ module.exports = (options) ->
         log.yellow mod.name
 
   .then ->
-
     if config.raw
       log.moat 1
-
-    process.exit()
-
-  .done()
 
 errors = ErrorMap
 

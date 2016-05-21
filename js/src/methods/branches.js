@@ -1,8 +1,10 @@
-var Path, Q, errorConfig, getBranchNames, printBranches, sync;
+var Path, Q, errorConfig, getBranchNames, log, printBranches, sync;
 
 Path = require("path");
 
 sync = require("sync");
+
+log = require("log");
 
 Q = require("q");
 
@@ -16,15 +18,14 @@ module.exports = function(options) {
     modulePath = Module.resolvePath(modulePath);
     moduleName = Path.basename(modulePath);
     mod = Module(moduleName);
-    printBranches(mod).then(function() {
-      return process.exit();
-    }).done();
-    return;
+    return printBranches(mod);
   }
   mods = Module.crawl(lotus.path);
-  return Q.all(sync.map(mods, printBranches)).then(function() {
-    return process.exit();
-  }).done();
+  return sync.reduce(mods, Q(), function(promise, mod) {
+    return promise.then(function() {
+      return printBranches(mod);
+    });
+  });
 };
 
 printBranches = function(mod) {

@@ -1,5 +1,7 @@
 
 inArray = require "in-array"
+log = require "log"
+Q = require "q"
 
 getBranchNames = require "../core/getBranchNames"
 printStatus = require "../core/printStatus"
@@ -71,7 +73,3 @@ module.exports = (options) ->
     log.green newBranch
     log.white "!"
     log.moat 1
-
-    process.exit()
-
-  .done()

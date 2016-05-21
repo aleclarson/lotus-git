@@ -1,5 +1,6 @@
 
 isType = require "isType"
+log = require "log"
 
 colorByStatus =
   added: "green"

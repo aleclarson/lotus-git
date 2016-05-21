@@ -1,6 +1,10 @@
-var getBranchNames, getStatus, inArray, printStatus;
+var Q, getBranchNames, getStatus, inArray, log, printStatus;
 
 inArray = require("in-array");
+
+log = require("log");
+
+Q = require("q");
 
 getBranchNames = require("../core/getBranchNames");
 
@@ -68,9 +72,8 @@ module.exports = function(options) {
     log.white(" modules with a branch named ");
     log.green(newBranch);
     log.white("!");
-    log.moat(1);
-    return process.exit();
-  }).done();
+    return log.moat(1);
+  });
 };
 
 //# sourceMappingURL=../../../map/src/methods/massCheckout.map
