@@ -1,12 +1,14 @@
-var Q, getBranchNames, getStatus, inArray, log, printStatus;
+var Q, getBranches, getStatus, inArray, isType, log, printStatus;
 
 inArray = require("in-array");
+
+isType = require("isType");
 
 log = require("log");
 
 Q = require("q");
 
-getBranchNames = require("../core/getBranchNames");
+getBranches = require("../core/getBranches");
 
 printStatus = require("../core/printStatus");
 
@@ -19,7 +21,9 @@ module.exports = function(options) {
   assertType(newBranch, String);
   mods = Module.crawl(lotus.path);
   return Q.all(sync.map(mods, function(mod) {
-    return getBranchNames(mod.path).then(function(branches) {
+    return getBranches({
+      modulePath: mod.path
+    }).then(function(branches) {
       if (branches.current === newBranch) {
         log.moat(1);
         log.yellow(mod.name);

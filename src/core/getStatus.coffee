@@ -1,11 +1,11 @@
 
+assertTypes = require "assertTypes"
 Finder = require "finder"
+isType = require "isType"
 assert = require "assert"
-sync = require "sync"
 exec = require "exec"
 
-STATUS_REGEX = /^[\s]*([ARMD\s\?]{1})([ARMD\s\?]{1}) ([^\s]+)( \-\> ([^\s]+))?/
-# RENAME_REGEX = /^[\s]*[ARMD\s\?]{2} [^\s]+(\-\> ([^\s]+))?/
+STATUS_REGEX = /^[\s]*([ARMDU\?\s]{1})([ARMDU\?\s]{1}) ([^\s]+)( \-\> ([^\s]+))?/
 
 findStagingStatus = Finder { regex: STATUS_REGEX, group: 1 }
 findWorkingStatus = Finder { regex: STATUS_REGEX, group: 2 }
@@ -17,57 +17,69 @@ statusBySymbol =
   "R": "renamed"
   "M": "modified"
   "D": "deleted"
-  " ": "unmodified"
+  "U": "unmerged"
   "?": "untracked"
+  " ": "unmodified"
 
-module.exports = (modulePath, options = {}) ->
+optionTypes =
+  modulePath: String
+  parseOutput: Boolean.Maybe
+
+module.exports = (options) ->
+
+  if isType options, String
+    options = { modulePath: arguments[0] }
+
+  assertTypes options, optionTypes
+
+  { modulePath, parseOutput } = options
 
   exec "git status --porcelain", cwd: modulePath
 
   .then (stdout) ->
 
-    return if stdout.length is 0
-
-    if options.raw
+    if parseOutput is no
       return stdout
-
-    lines = stdout.split "\n"
-
-    return lines if options.parseLines is no
 
     results = {
       staged: {}
       tracked: {}
       untracked: []
+      unmerged: []
     }
 
-    sync.each lines, (line) ->
+    if stdout.length is 0
+      return results
 
-      path = findPath line
+    for line in stdout.split "\n"
+
+      file = { path: findPath line }
       stagingStatus = findStagingStatus line
       workingStatus = findWorkingStatus line
 
       if (stagingStatus is "?") and (workingStatus is "?")
-        results.untracked.push { path }
-        return
+        results.untracked.push file
+        continue
 
-      if (stagingStatus isnt " ") and (stagingStatus isnt "?")
-        status = statusBySymbol[stagingStatus]
-        assert status?, "Unrecognized status: '#{stagingStatus}'"
-        files = results.staged[status] ?= []
-        file = { path }
-
-      else if (workingStatus isnt " ") and (workingStatus isnt "?")
-        status = statusBySymbol[workingStatus]
-        assert status?, "Unrecognized status: '#{workingStatus}'"
-        files = results.tracked[status] ?= []
-        file = { path }
+      if (stagingStatus is "U") and (workingStatus is "U")
+        results.unmerged.push file
+        continue
 
       if (stagingStatus is "R") or (workingStatus is "R")
         file.newPath = findNewPath line
         file.oldPath = file.path
         delete file.path
 
-      files.push file
+      if (stagingStatus isnt " ") and (stagingStatus isnt "?")
+        status = statusBySymbol[stagingStatus]
+        assert status, "Unrecognized status: '#{stagingStatus}'"
+        files = results.staged[status] ?= []
+        files.push file
+
+      if (workingStatus isnt " ") and (workingStatus isnt "?")
+        status = statusBySymbol[workingStatus]
+        assert status, "Unrecognized status: '#{workingStatus}'"
+        files = results.tracked[status] ?= []
+        files.push file
 
     return results

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "stageAll.js",
+  "sourceRoot": "../../../src/core",
+  "sources": [
+    "stageAll.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA,IAAA;;AAAA,UAAA,GAAa,OAAA,CAAQ,YAAR;;AACb,IAAA,GAAO,OAAA,CAAQ,MAAR;;AAEP,MAAM,CAAC,OAAP,GAAiB,SAAC,UAAD;EAEf,UAAA,CAAW,UAAX,EAAuB,MAAvB;SAEA,IAAA,CAAK,kBAAL,EAAyB;IAAA,GAAA,EAAK,UAAL;GAAzB;AAJe"
+}

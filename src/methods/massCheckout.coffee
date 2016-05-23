@@ -1,9 +1,10 @@
 
 inArray = require "in-array"
+isType = require "isType"
 log = require "log"
 Q = require "q"
 
-getBranchNames = require "../core/getBranchNames"
+getBranches = require "../core/getBranches"
 printStatus = require "../core/printStatus"
 getStatus = require "../core/getStatus"
 
@@ -18,7 +19,7 @@ module.exports = (options) ->
 
   Q.all sync.map mods, (mod) ->
 
-    getBranchNames mod.path
+    getBranches { modulePath: mod.path }
 
     .then (branches) ->
 

@@ -1,5 +1,7 @@
 
+hasKeys = require "hasKeys"
 isType = require "isType"
+sync = require "sync"
 log = require "log"
 
 colorByStatus =
@@ -11,7 +13,12 @@ colorByStatus =
 
 module.exports = (moduleName, results) ->
 
-  return unless isType results, Object
+  return if not isType results, Object
+  return if not hasKeys results
+  hasResults = no
+  sync.each results, (value) ->
+    hasResults = yes if hasKeys value
+  return if not hasResults
 
   log.pushIndent 2
   log.moat 1

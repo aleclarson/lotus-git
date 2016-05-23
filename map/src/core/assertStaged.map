@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "assertStaged.js",
+  "sourceRoot": "../../../src/core",
+  "sources": [
+    "assertStaged.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA,IAAA;;AAAA,UAAA,GAAa,OAAA,CAAQ,cAAR;;AAEb,MAAM,CAAC,OAAP,GAAiB,SAAC,UAAD;SAEf,UAAA,CAAW,UAAX,EAAuB;IAAE,KAAA,EAAO,QAAT;GAAvB,CAEA,CAAC,IAFD,CAEM,SAAC,gBAAD;IAEJ,IAAG,CAAI,gBAAP;AACE,YAAM,KAAA,CAAM,wBAAN,EADR;;EAFI,CAFN;AAFe"
+}

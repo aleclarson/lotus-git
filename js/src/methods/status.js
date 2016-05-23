@@ -1,12 +1,12 @@
-var ErrorMap, Path, Q, errors, getStatus, isType, log, printStatus, sync;
+var Path, Q, assertRepo, exec, getStatus, isRepo, log, printStatus, sync, trackFailure;
 
-ErrorMap = require("ErrorMap");
-
-isType = require("isType");
+trackFailure = require("failure").trackFailure;
 
 Path = require("path");
 
 sync = require("sync");
+
+exec = require("exec");
 
 log = require("log");
 
@@ -14,58 +14,70 @@ Q = require("q");
 
 printStatus = require("../core/printStatus");
 
+assertRepo = require("../core/assertRepo");
+
 getStatus = require("../core/getStatus");
 
+isRepo = require("../core/isRepo");
+
 module.exports = function(options) {
-  var Module, config, mods, moduleName, modulePath;
+  var Module, mods, modulePath, parseOutput;
   Module = lotus.Module;
+  parseOutput = options.names !== true;
   modulePath = options._.shift();
   if (modulePath) {
     modulePath = Module.resolvePath(modulePath);
-    moduleName = Path.relative(lotus.path, modulePath);
-    return getStatus(modulePath).then(function(results) {
+    return assertRepo(modulePath).then(function() {
+      return getStatus({
+        modulePath: modulePath,
+        parseOutput: parseOutput
+      });
+    }).then(function(results) {
+      var moduleName;
+      moduleName = Path.relative(lotus.path, modulePath);
       return printStatus(moduleName, results);
     }).fail(function(error) {
-      log.moat(1);
-      log.red(moduleName);
-      log.moat(0);
-      log.gray.dim(error.stack);
-      return log.moat(1);
+      throw error;
     });
   }
-  config = {
-    raw: options.names === true
-  };
   log.clear();
-  mods = Module.crawl(lotus.path);
-  if (config.raw) {
+  if (!parseOutput) {
     log.moat(1);
   }
+  mods = Module.crawl(lotus.path);
+  log.moat(1);
+  log.white("Found ");
+  log.yellow(mods.length);
+  log.white(" modules in ");
+  log.cyan(lotus.path);
+  log.moat(1);
   return Q.all(sync.map(mods, function(mod) {
-    return getStatus(mod.path, config).then(function(results) {
-      if (config.raw) {
-        if (!results) {
+    if (!isRepo(mod.path)) {
+      return;
+    }
+    return getStatus({
+      modulePath: mod.path,
+      parseOutput: parseOutput
+    }).then(function(status) {
+      if (!parseOutput) {
+        if (!status.length) {
           return;
         }
         log.moat(0);
         log.bold(mod.name);
         return;
       }
-      return printStatus(mod.name, results);
+      return printStatus(mod.name, status);
     }).fail(function(error) {
-      return errors.resolve(error, function() {
-        return log.yellow(mod.name);
+      return trackFailure(error, {
+        mod: mod
       });
     });
   })).then(function() {
-    if (config.raw) {
+    if (!parseOutput) {
       return log.moat(1);
     }
   });
 };
-
-errors = ErrorMap({
-  quiet: ["fatal: Not a git repository (or any of the parent directories): .git"]
-});
 
 //# sourceMappingURL=../../../map/src/methods/status.map

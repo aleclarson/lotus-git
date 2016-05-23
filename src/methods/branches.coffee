@@ -4,7 +4,7 @@ sync = require "sync"
 log = require "log"
 Q = require "q"
 
-getBranchNames = require "../core/getBranchNames"
+getBranches = require "../core/getBranches"
 
 module.exports = (options) ->
 
@@ -24,7 +24,7 @@ module.exports = (options) ->
 
 printBranches = (mod) ->
 
-  getBranchNames mod.path
+  getBranches { modulePath: mod.path }
 
   .then (branches) ->
     return if branches.length is 0

@@ -11,16 +11,23 @@
     ]
   },
   "dependencies": {
-    "ErrorMap": "aleclarson/ErrorMap#1.0.0",
+    "ArrayOf": "aleclarson/ArrayOf#1.0.0",
+    "OneOf": "aleclarson/OneOf#1.0.0",
+    "Void": "aleclarson/Void#1.0.0",
     "assert": "aleclarson/assert#1.0.0",
+    "assertType": "aleclarson/assertType#1.0.0",
+    "assertTypes": "aleclarson/assertTypes#1.0.0",
     "exec": "aleclarson/exec#1.0.0",
+    "failure": "aleclarson/failure#1.0.0",
     "finder": "aleclarson/finder#1.0.0",
+    "hasKeys": "aleclarson/hasKeys#1.0.0",
     "in-array": "aleclarson/in-array#1.0.0",
     "io": "aleclarson/io#1.0.0",
     "isType": "aleclarson/isType#1.0.0",
     "log": "aleclarson/log#1.0.0",
+    "node-semver": "aleclarson/node-semver#5.1.0",
     "q": "aleclarson/q#1.0.0",
-    "sync": "aleclarson/sync#1.0.0",
-    "type-utils": "aleclarson/type-utils#1.0.0"
+    "sorted-array": "aleclarson/sorted-array#2.0.0",
+    "sync": "aleclarson/sync#1.0.0"
   }
 }

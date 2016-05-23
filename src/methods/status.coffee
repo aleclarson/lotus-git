@@ -1,71 +1,71 @@
 
-ErrorMap = require "ErrorMap"
-isType = require "isType"
+{ trackFailure } = require "failure"
+
 Path = require "path"
 sync = require "sync"
+exec = require "exec"
 log = require "log"
 Q = require "q"
 
 printStatus = require "../core/printStatus"
+assertRepo = require "../core/assertRepo"
 getStatus = require "../core/getStatus"
+isRepo = require "../core/isRepo"
 
 module.exports = (options) ->
 
   { Module } = lotus
+
+  parseOutput = options.names isnt yes
 
   modulePath = options._.shift()
 
   if modulePath
 
     modulePath = Module.resolvePath modulePath
-    moduleName = Path.relative lotus.path, modulePath
 
-    return getStatus modulePath
+    return assertRepo modulePath
+
+    .then ->
+      getStatus { modulePath, parseOutput }
 
     .then (results) ->
+      moduleName = Path.relative lotus.path, modulePath
       printStatus moduleName, results
 
     .fail (error) ->
-      log.moat 1
-      log.red moduleName
-      log.moat 0
-      log.gray.dim error.stack
-      log.moat 1
-
-  config =
-    raw: options.names is yes
+      throw error
 
   log.clear()
+  log.moat 1 if not parseOutput
 
   mods = Module.crawl lotus.path
 
-  if config.raw
-    log.moat 1
+  log.moat 1
+  log.white "Found "
+  log.yellow mods.length
+  log.white " modules in "
+  log.cyan lotus.path
+  log.moat 1
 
   Q.all sync.map mods, (mod) ->
 
-    getStatus mod.path, config
+    return if not isRepo mod.path
 
-    .then (results) ->
+    getStatus { modulePath: mod.path, parseOutput }
 
-      if config.raw
-        return unless results
+    .then (status) ->
+
+      if not parseOutput
+        return if not status.length
         log.moat 0
         log.bold mod.name
         return
 
-      printStatus mod.name, results
+      printStatus mod.name, status
 
     .fail (error) ->
-      errors.resolve error, ->
-        log.yellow mod.name
+      trackFailure error, { mod }
 
   .then ->
-    if config.raw
-      log.moat 1
-
-errors = ErrorMap
-
-  quiet: [
-    "fatal: Not a git repository (or any of the parent directories): .git"
-  ]
+    log.moat 1 if not parseOutput

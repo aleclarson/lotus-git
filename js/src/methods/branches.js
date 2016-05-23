@@ -1,4 +1,4 @@
-var Path, Q, errorConfig, getBranchNames, log, printBranches, sync;
+var Path, Q, errorConfig, getBranches, log, printBranches, sync;
 
 Path = require("path");
 
@@ -8,7 +8,7 @@ log = require("log");
 
 Q = require("q");
 
-getBranchNames = require("../core/getBranchNames");
+getBranches = require("../core/getBranches");
 
 module.exports = function(options) {
   var Module, mod, mods, moduleName, modulePath;
@@ -29,7 +29,9 @@ module.exports = function(options) {
 };
 
 printBranches = function(mod) {
-  return getBranchNames(mod.path).then(function(branches) {
+  return getBranches({
+    modulePath: mod.path
+  }).then(function(branches) {
     if (branches.length === 0) {
       return;
     }

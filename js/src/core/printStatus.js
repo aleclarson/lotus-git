@@ -1,6 +1,10 @@
-var colorByStatus, isType, log, printPaths;
+var colorByStatus, hasKeys, isType, log, printPaths, sync;
+
+hasKeys = require("hasKeys");
 
 isType = require("isType");
+
+sync = require("sync");
 
 log = require("log");
 
@@ -13,8 +17,20 @@ colorByStatus = {
 };
 
 module.exports = function(moduleName, results) {
-  var files, key, status, value;
+  var files, hasResults, key, status, value;
   if (!isType(results, Object)) {
+    return;
+  }
+  if (!hasKeys(results)) {
+    return;
+  }
+  hasResults = false;
+  sync.each(results, function(value) {
+    if (hasKeys(value)) {
+      return hasResults = true;
+    }
+  });
+  if (!hasResults) {
     return;
   }
   log.pushIndent(2);

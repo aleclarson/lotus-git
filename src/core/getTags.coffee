@@ -1,10 +1,17 @@
 
+assertType = require "assertType"
 exec = require "exec"
 log = require "log"
 
 module.exports = (modulePath) ->
+
+  assertType modulePath, String
+
   exec "git tag", cwd: modulePath
+
   .then (stdout) ->
-    tags = stdout.split log.ln
-    tags.shift() # Remove the starting newline.
-    return tags
+
+    if stdout.length is 0
+      return []
+
+    return stdout.split log.ln
