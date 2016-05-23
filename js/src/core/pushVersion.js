@@ -99,16 +99,6 @@ module.exports = function(options) {
     return undoLatestCommit(modulePath).then(function() {
       return removeTag(modulePath, version);
     }).then(function() {
-      if (error.message === "Must force push to overwrite remote commits!") {
-        log.moat(1);
-        log.red("Push failed!");
-        log.moat(1);
-        log.gray.dim("Must use ");
-        log.white("--force");
-        log.gray.dim(" when overwriting remote commits!");
-        log.moat(1);
-        return;
-      }
       throw error;
     });
   });

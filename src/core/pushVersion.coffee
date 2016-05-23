@@ -74,7 +74,7 @@ module.exports = (options) ->
 
     throw error
 
-  # In case 'tryPushing' fails again, we need a separate 'onRejected' handler.
+  # In case 'pushChanges' fails again, we need a separate 'onRejected' handler.
   .fail (error) ->
 
     undoLatestCommit modulePath
@@ -83,15 +83,4 @@ module.exports = (options) ->
       removeTag modulePath, version
 
     .then ->
-
-      if error.message is "Must force push to overwrite remote commits!"
-        log.moat 1
-        log.red "Push failed!"
-        log.moat 1
-        log.gray.dim "Must use "
-        log.white "--force"
-        log.gray.dim " when overwriting remote commits!"
-        log.moat 1
-        return
-
       throw error

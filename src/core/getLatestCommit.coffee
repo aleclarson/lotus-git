@@ -5,6 +5,7 @@ exec = require "exec"
 Q = require "q"
 
 getCurrentBranch = require "./getCurrentBranch"
+hasBranch = require "./hasBranch"
 
 optionTypes =
   modulePath: String
@@ -27,7 +28,12 @@ module.exports = (options) ->
 
   Q.try ->
 
-    return if branchName
+    if branchName
+
+      return hasBranch modulePath, branchName
+
+      .then (hasBranch) ->
+        branchName = null if not hasBranch
 
     getCurrentBranch modulePath
 
@@ -35,10 +41,19 @@ module.exports = (options) ->
       branchName = currentBranch
 
   .then ->
-    args = [ "-1", "--pretty=oneline", remoteName + "/" + branchName ]
+
+    if branchName is null
+      return null
+
+    args = [
+      "-1"
+      "--pretty=oneline"
+      remoteName + "/" + branchName
+    ]
+
     exec "git log", args, cwd: modulePath
 
-  .then (stdout) ->
-    spaceIndex = stdout.indexOf " "
-    id: stdout.slice 0, spaceIndex
-    message: stdout.slice spaceIndex + 1
+    .then (stdout) ->
+      spaceIndex = stdout.indexOf " "
+      id: stdout.slice 0, spaceIndex
+      message: stdout.slice spaceIndex + 1

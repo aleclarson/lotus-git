@@ -39,9 +39,7 @@ module.exports = function(options) {
       cwd: modulePath
     });
   }).fail(function(error) {
-    var expected;
-    expected = "Automatic merge went well; stopped before committing as requested";
-    if (error.message === expected) {
+    if (/Automatic merge went well/.test(error.message)) {
       return;
     }
     throw error;

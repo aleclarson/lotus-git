@@ -51,16 +51,16 @@ module.exports = function(options) {
       }
       throw error;
     }).then(function() {
-      return getCurrentBranch(modulePath);
-    }).then(function(currentBranch) {
-      return getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
-        log.moat(1);
-        log.green("Push success! ");
-        log.gray.dim(remoteName + "/" + currentBranch);
-        log.moat(1);
-        log.yellow(commit.id.slice(0, 7));
-        log.white(" ", commit.message);
-        return log.moat(1);
+      return getCurrentBranch(modulePath).then(function(currentBranch) {
+        return getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
+          log.moat(1);
+          log.green("Push success! ");
+          log.gray.dim(remoteName + "/" + currentBranch);
+          log.moat(1);
+          log.yellow(commit.id.slice(0, 7));
+          log.white(" ", commit.message);
+          return log.moat(1);
+        });
       });
     }).fail(function(error) {
       return undoLatestCommit(modulePath).then(function() {

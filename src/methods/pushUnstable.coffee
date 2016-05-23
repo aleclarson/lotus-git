@@ -51,20 +51,21 @@ module.exports = (options) ->
       throw error
 
     .then ->
+
       getCurrentBranch modulePath
 
-    .then (currentBranch) ->
+      .then (currentBranch) ->
 
-      getLatestCommit modulePath, remoteName, currentBranch
+        getLatestCommit modulePath, remoteName, currentBranch
 
-      .then (commit) ->
-        log.moat 1
-        log.green "Push success! "
-        log.gray.dim remoteName + "/" + currentBranch
-        log.moat 1
-        log.yellow commit.id.slice 0, 7
-        log.white " ", commit.message
-        log.moat 1
+        .then (commit) ->
+          log.moat 1
+          log.green "Push success! "
+          log.gray.dim remoteName + "/" + currentBranch
+          log.moat 1
+          log.yellow commit.id.slice 0, 7
+          log.white " ", commit.message
+          log.moat 1
 
     .fail (error) ->
 

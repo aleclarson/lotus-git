@@ -1,4 +1,4 @@
-var Q, assertTypes, exec, getCurrentBranch, isType, optionTypes;
+var Q, assertTypes, exec, getCurrentBranch, hasBranch, isType, optionTypes;
 
 assertTypes = require("assertTypes");
 
@@ -9,6 +9,8 @@ exec = require("exec");
 Q = require("q");
 
 getCurrentBranch = require("./getCurrentBranch");
+
+hasBranch = require("./hasBranch");
 
 optionTypes = {
   modulePath: String,
@@ -32,24 +34,31 @@ module.exports = function(options) {
   }
   return Q["try"](function() {
     if (branchName) {
-      return;
+      return hasBranch(modulePath, branchName).then(function(hasBranch) {
+        if (!hasBranch) {
+          return branchName = null;
+        }
+      });
     }
     return getCurrentBranch(modulePath).then(function(currentBranch) {
       return branchName = currentBranch;
     });
   }).then(function() {
     var args;
+    if (branchName === null) {
+      return null;
+    }
     args = ["-1", "--pretty=oneline", remoteName + "/" + branchName];
     return exec("git log", args, {
       cwd: modulePath
+    }).then(function(stdout) {
+      var spaceIndex;
+      spaceIndex = stdout.indexOf(" ");
+      return {
+        id: stdout.slice(0, spaceIndex),
+        message: stdout.slice(spaceIndex + 1)
+      };
     });
-  }).then(function(stdout) {
-    var spaceIndex;
-    spaceIndex = stdout.indexOf(" ");
-    return {
-      id: stdout.slice(0, spaceIndex),
-      message: stdout.slice(spaceIndex + 1)
-    };
   });
 };
 

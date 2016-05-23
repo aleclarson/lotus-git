@@ -47,8 +47,12 @@ module.exports = (options) ->
         needsForce = /\(non-fast-forward\)$/.test lines[1]
         assert not needsForce, "Must force push to overwrite remote commits!"
 
+      # Detect "force updates" and normal pushes. 'git push' incorrectly prints to 'stderr'!
       regex = RegExp "(\\+|\\s)[\\s]+([a-z0-9]{7})[\\.]{2,3}([a-z0-9]{7})[\\s]+(HEAD|#{currentBranch})[\\s]+->[\\s]+#{currentBranch}"
-      if regex.test lines[1]
-        return # 'git push' incorrectly prints using stderr
+      return if regex.test lines[1]
+
+      # Detect new branch pushes. 'git push' incorrectly prints to 'stderr'!
+      regex = RegExp "\\*[\\s]+\[new branch\][\\s]+#{currentBranch}[\\s]+->[\\s]+#{currentBranch}"
+      return if regex.test lines[1]
 
       throw error

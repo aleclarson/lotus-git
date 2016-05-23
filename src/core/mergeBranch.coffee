@@ -31,8 +31,7 @@ module.exports = (options) ->
 
   .fail (error) ->
 
-    expected = "Automatic merge went well; stopped before committing as requested"
-    if error.message is expected
-      return
+    if /Automatic merge went well/.test error.message
+      return # 'git merge' incorrectly prints to 'stderr'
 
     throw error
