@@ -1,12 +1,25 @@
 
-assertType = require "assertType"
+assertTypes = require "assertTypes"
+isType = require "isType"
 exec = require "exec"
 
-module.exports = (modulePath) ->
+optionTypes =
+  modulePath: String
+  keepIndex: Boolean.Maybe
 
-  assertType modulePath, String
+module.exports = (options) ->
 
-  exec "git stash", cwd: modulePath
+  if isType options, String
+    options = { modulePath: options }
+
+  assertTypes options, optionTypes
+
+  { modulePath, keepIndex } = options
+
+  args = []
+  args.push "--keep-index" if keepIndex
+
+  exec "git stash", args, cwd: modulePath
 
   .fail (error) ->
 
