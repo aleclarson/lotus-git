@@ -57,7 +57,7 @@ module.exports = function(options) {
       if (regex.test(lines[1])) {
         return;
       }
-      regex = RegExp("\\*[\\s]+\[new branch\][\\s]+" + currentBranch + "[\\s]+->[\\s]+" + currentBranch);
+      regex = RegExp("\\*[\\s]+\\[new branch\\][\\s]+" + currentBranch + "[\\s]+->[\\s]+" + currentBranch);
       if (regex.test(lines[1])) {
         return;
       }

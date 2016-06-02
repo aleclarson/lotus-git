@@ -81,7 +81,7 @@ module.exports = function(options) {
 };
 
 getDateString = function() {
-  var array, date, day, minutes, month;
+  var array, date, day, hours, minutes, month;
   array = [];
   date = new Date;
   month = date.getMonth() + 1;
@@ -95,7 +95,8 @@ getDateString = function() {
   }
   array.push("/", day);
   array.push("/", date.getFullYear());
-  array.push(" ", date.getHours() % 12);
+  hours = date.getHours() % 12;
+  array.push(" ", hours === 0 ? 12 : hours);
   minutes = date.getMinutes();
   if (minutes < 10) {
     minutes = "0" + minutes;

@@ -101,7 +101,8 @@ getDateString = ->
 
   array.push "/", date.getFullYear()
 
-  array.push " ", date.getHours() % 12
+  hours = date.getHours() % 12
+  array.push " ", if hours is 0 then 12 else hours
 
   minutes = date.getMinutes()
   minutes = "0" + minutes if minutes < 10

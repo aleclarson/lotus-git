@@ -52,7 +52,7 @@ module.exports = (options) ->
       return if regex.test lines[1]
 
       # Detect new branch pushes. 'git push' incorrectly prints to 'stderr'!
-      regex = RegExp "\\*[\\s]+\[new branch\][\\s]+#{currentBranch}[\\s]+->[\\s]+#{currentBranch}"
+      regex = RegExp "\\*[\\s]+\\[new branch\\][\\s]+#{currentBranch}[\\s]+->[\\s]+#{currentBranch}"
       return if regex.test lines[1]
 
       throw error

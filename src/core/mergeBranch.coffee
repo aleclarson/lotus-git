@@ -29,6 +29,7 @@ module.exports = (options) ->
     args.push "-X", "theirs" if force
     exec "git merge", args, cwd: modulePath
 
+  # TODO: Fail gracefully if the merge was empty.
   .fail (error) ->
 
     if /Automatic merge went well/.test error.message
