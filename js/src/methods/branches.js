@@ -1,12 +1,12 @@
-var Path, Q, errorConfig, getBranches, log, printBranches, sync;
+var Path, Promise, errorConfig, getBranches, log, printBranches, sync;
+
+Promise = require("Promise");
 
 Path = require("path");
 
 sync = require("sync");
 
 log = require("log");
-
-Q = require("q");
 
 getBranches = require("../core/getBranches");
 
@@ -21,10 +21,8 @@ module.exports = function(options) {
     return printBranches(mod);
   }
   mods = Module.crawl(lotus.path);
-  return sync.reduce(mods, Q(), function(promise, mod) {
-    return promise.then(function() {
-      return printBranches(mod);
-    });
+  return Promise.chain(mods, function(mod) {
+    return printBranches(mod);
   });
 };
 

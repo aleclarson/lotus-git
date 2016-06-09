@@ -1,12 +1,12 @@
-var Q, assertTypes, exec, isType, optionTypes, popStash, pushStash;
+var Promise, assertTypes, exec, isType, optionTypes, popStash, pushStash;
 
 assertTypes = require("assertTypes");
+
+Promise = require("Promise");
 
 isType = require("isType");
 
 exec = require("exec");
-
-Q = require("q");
 
 pushStash = require("./pushStash");
 
@@ -28,7 +28,7 @@ module.exports = function(options) {
   modulePath = options.modulePath, keepChanges = options.keepChanges;
   args = ["HEAD^"];
   args.unshift(keepChanges === false ? "--hard" : "--soft");
-  return Q["try"](function() {
+  return Promise["try"](function() {
     if (keepChanges === false) {
       return pushStash(modulePath);
     }

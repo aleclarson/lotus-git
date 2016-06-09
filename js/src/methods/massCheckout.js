@@ -1,12 +1,12 @@
-var Q, getBranches, getStatus, inArray, isType, log, printStatus;
+var Promise, getBranches, getStatus, inArray, isType, log, printStatus;
+
+Promise = require("Promise");
 
 inArray = require("in-array");
 
 isType = require("isType");
 
 log = require("log");
-
-Q = require("q");
 
 getBranches = require("../core/getBranches");
 
@@ -20,7 +20,7 @@ module.exports = function(options) {
   newBranch = options._.shift();
   assertType(newBranch, String);
   mods = Module.crawl(lotus.path);
-  return Q.all(sync.map(mods, function(mod) {
+  return Promise.map(mods, function(mod) {
     return getBranches({
       modulePath: mod.path
     }).then(function(branches) {
@@ -60,7 +60,7 @@ module.exports = function(options) {
         return mod;
       });
     });
-  })).then(function(mods) {
+  }).then(function(mods) {
     mods = sync.filter(mods, function(mod) {
       if (!isType(mod, Module)) {
         return false;

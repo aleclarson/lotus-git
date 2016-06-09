@@ -8,7 +8,7 @@
 #
 #   tagDirPath = Path.join module.path, ".git/refs/tags"
 #
-#   Q.try ->
+#   Promise.try ->
 #     return unless syncFs.isDir tagDirPath
 #     tags = syncFs.readDir tagDirPath
 #     return unless tags?

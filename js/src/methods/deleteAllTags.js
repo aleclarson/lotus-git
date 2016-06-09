@@ -1,4 +1,6 @@
-var Path, Q, exec, getTags, isType, log, sync;
+var Path, Promise, exec, getTags, isType, log, sync;
+
+Promise = require("Promise");
 
 isType = require("isType");
 
@@ -9,8 +11,6 @@ sync = require("sync");
 exec = require("exec");
 
 log = require("log");
-
-Q = require("q");
 
 getTags = require("../core/getTags");
 
@@ -33,7 +33,7 @@ module.exports = function(options) {
       if (!isType(options.remote, String)) {
         return;
       }
-      return Q.all(sync.map(tags, function(tag) {
+      return Promise.all(sync.map(tags, function(tag) {
         return exec("git push --delete " + options.remote + " " + tag);
       }));
     }).then(function() {

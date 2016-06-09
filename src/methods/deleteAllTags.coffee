@@ -1,10 +1,10 @@
 
+Promise = require "Promise"
 isType = require "isType"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
 log = require "log"
-Q = require "q"
 
 getTags = require "../core/getTags"
 
@@ -31,7 +31,7 @@ module.exports = (options) ->
 
     .then ->
       return unless isType options.remote, String
-      Q.all sync.map tags, (tag) ->
+      Promise.all sync.map tags, (tag) ->
         exec "git push --delete #{options.remote} #{tag}"
 
     .then ->

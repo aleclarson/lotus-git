@@ -1,7 +1,6 @@
 
 assertTypes = require "assertTypes"
 exec = require "exec"
-Q = require "q"
 
 hasChanges = require "./hasChanges"
 

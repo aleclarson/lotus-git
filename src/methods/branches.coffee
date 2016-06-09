@@ -1,8 +1,8 @@
 
+Promise = require "Promise"
 Path = require "path"
 sync = require "sync"
 log = require "log"
-Q = require "q"
 
 getBranches = require "../core/getBranches"
 
@@ -19,8 +19,8 @@ module.exports = (options) ->
     return printBranches mod
 
   mods = Module.crawl lotus.path
-  sync.reduce mods, Q(), (promise, mod) ->
-    promise.then -> printBranches mod
+  Promise.chain mods, (mod) ->
+    printBranches mod
 
 printBranches = (mod) ->
 

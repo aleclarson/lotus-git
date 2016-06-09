@@ -1,4 +1,6 @@
-var Path, Q, assertRepo, exec, isRepo, log;
+var Path, Promise, assertRepo, exec, isRepo, log;
+
+Promise = require("Promise");
 
 Path = require("path");
 
@@ -6,14 +8,12 @@ exec = require("exec");
 
 log = require("log");
 
-Q = require("q");
-
 isRepo = require("./isRepo");
 
 module.exports = assertRepo = function(modulePath) {
   var moduleName, shouldInit;
   if (isRepo(modulePath)) {
-    return Q();
+    return Promise();
   }
   moduleName = Path.resolve(lotus.path, modulePath);
   log.moat(1);
@@ -28,7 +28,7 @@ module.exports = assertRepo = function(modulePath) {
   });
   log.moat(1);
   if (!shouldInit) {
-    return Q();
+    return Promise();
   }
   return exec("git init", {
     cwd: modulePath

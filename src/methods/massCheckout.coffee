@@ -1,8 +1,8 @@
 
+Promise = require "Promise"
 inArray = require "in-array"
 isType = require "isType"
 log = require "log"
-Q = require "q"
 
 getBranches = require "../core/getBranches"
 printStatus = require "../core/printStatus"
@@ -17,7 +17,7 @@ module.exports = (options) ->
 
   mods = Module.crawl lotus.path
 
-  Q.all sync.map mods, (mod) ->
+  Promise.map mods, (mod) ->
 
     getBranches { modulePath: mod.path }
 

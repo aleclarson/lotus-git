@@ -4,7 +4,6 @@ isType = require "isType"
 assert = require "assert"
 exec = require "exec"
 log = require "log"
-Q = require "q"
 
 getCurrentBranch = require "./getCurrentBranch"
 

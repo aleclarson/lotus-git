@@ -1,12 +1,12 @@
-var Q, assertTypes, exec, getCurrentBranch, hasBranch, isType, optionTypes;
+var Promise, assertTypes, exec, getCurrentBranch, hasBranch, isType, optionTypes;
 
 assertTypes = require("assertTypes");
+
+Promise = require("Promise");
 
 isType = require("isType");
 
 exec = require("exec");
-
-Q = require("q");
 
 getCurrentBranch = require("./getCurrentBranch");
 
@@ -32,7 +32,7 @@ module.exports = function(options) {
   if (remoteName == null) {
     remoteName = "origin";
   }
-  return Q["try"](function() {
+  return Promise["try"](function() {
     if (branchName) {
       return hasBranch(modulePath, branchName).then(function(hasBranch) {
         if (!hasBranch) {

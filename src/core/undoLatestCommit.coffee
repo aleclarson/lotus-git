@@ -1,8 +1,8 @@
 
 assertTypes = require "assertTypes"
+Promise = require "Promise"
 isType = require "isType"
 exec = require "exec"
-Q = require "q"
 
 pushStash = require "./pushStash"
 popStash = require "./popStash"
@@ -23,7 +23,7 @@ module.exports = (options) ->
   args = [ "HEAD^" ]
   args.unshift if keepChanges is no then "--hard" else "--soft"
 
-  Q.try ->
+  Promise.try ->
     # If the commit's changes should be scrapped,
     # we need to stash the working tree.
     # Otherwise, the hard reset will erase everything!

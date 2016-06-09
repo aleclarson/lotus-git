@@ -1,8 +1,8 @@
 
+Promise = require "Promise"
 Path = require "path"
 exec = require "exec"
 log = require "log"
-Q = require "q"
 
 isRepo = require "./isRepo"
 
@@ -10,7 +10,7 @@ module.exports =
 assertRepo = (modulePath) ->
 
   if isRepo modulePath
-    return Q()
+    return Promise()
 
   moduleName = Path.resolve lotus.path, modulePath
   log.moat 1
@@ -26,6 +26,6 @@ assertRepo = (modulePath) ->
   log.moat 1
 
   if not shouldInit
-    return Q()
+    return Promise()
 
   exec "git init", cwd: modulePath

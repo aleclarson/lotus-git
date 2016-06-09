@@ -1,10 +1,8 @@
-var Q, assertTypes, exec, hasChanges, optionTypes;
+var assertTypes, exec, hasChanges, optionTypes;
 
 assertTypes = require("assertTypes");
 
 exec = require("exec");
-
-Q = require("q");
 
 hasChanges = require("./hasChanges");
 

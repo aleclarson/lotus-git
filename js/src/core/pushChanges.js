@@ -1,4 +1,4 @@
-var Q, assert, assertTypes, exec, getCurrentBranch, isType, log, optionTypes;
+var assert, assertTypes, exec, getCurrentBranch, isType, log, optionTypes;
 
 assertTypes = require("assertTypes");
 
@@ -9,8 +9,6 @@ assert = require("assert");
 exec = require("exec");
 
 log = require("log");
-
-Q = require("q");
 
 getCurrentBranch = require("./getCurrentBranch");
 

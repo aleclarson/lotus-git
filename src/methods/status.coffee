@@ -1,11 +1,11 @@
 
 { trackFailure } = require "failure"
 
+Promise = require "Promise"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
 log = require "log"
-Q = require "q"
 
 printStatus = require "../core/printStatus"
 assertRepo = require "../core/assertRepo"
@@ -48,7 +48,7 @@ module.exports = (options) ->
   log.cyan lotus.path
   log.moat 1
 
-  Q.all sync.map mods, (mod) ->
+  Promise.map mods, (mod) ->
 
     return if not isRepo mod.path
 

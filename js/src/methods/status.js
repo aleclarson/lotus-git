@@ -1,6 +1,8 @@
-var Path, Q, assertRepo, exec, getStatus, isRepo, log, printStatus, sync, trackFailure;
+var Path, Promise, assertRepo, exec, getStatus, isRepo, log, printStatus, sync, trackFailure;
 
 trackFailure = require("failure").trackFailure;
+
+Promise = require("Promise");
 
 Path = require("path");
 
@@ -9,8 +11,6 @@ sync = require("sync");
 exec = require("exec");
 
 log = require("log");
-
-Q = require("q");
 
 printStatus = require("../core/printStatus");
 
@@ -51,7 +51,7 @@ module.exports = function(options) {
   log.white(" modules in ");
   log.cyan(lotus.path);
   log.moat(1);
-  return Q.all(sync.map(mods, function(mod) {
+  return Promise.map(mods, function(mod) {
     if (!isRepo(mod.path)) {
       return;
     }
@@ -73,7 +73,7 @@ module.exports = function(options) {
         mod: mod
       });
     });
-  })).then(function() {
+  }).then(function() {
     if (!parseOutput) {
       return log.moat(1);
     }

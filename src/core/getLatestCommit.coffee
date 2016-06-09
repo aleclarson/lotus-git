@@ -1,8 +1,8 @@
 
 assertTypes = require "assertTypes"
+Promise = require "Promise"
 isType = require "isType"
 exec = require "exec"
-Q = require "q"
 
 getCurrentBranch = require "./getCurrentBranch"
 hasBranch = require "./hasBranch"
@@ -26,7 +26,7 @@ module.exports = (options) ->
 
   remoteName ?= "origin"
 
-  Q.try ->
+  return Promise.try ->
 
     if branchName
 
