@@ -25,10 +25,7 @@ module.exports = function(options) {
     if (!toBranch) {
       return;
     }
-    return changeBranch({
-      modulePath: modulePath,
-      branchName: toBranch
-    });
+    return changeBranch(modulePath, toBranch);
   }).then(function() {
     var args;
     args = [fromBranch, "--no-commit"];

@@ -55,7 +55,7 @@ module.exports = function(options) {
     }).then(function() {
       return getStatus(modulePath);
     }).then(function(status) {
-      var i, len, path, ref;
+      var hasChanges, i, len, path, ref;
       if (status.unmerged.length) {
         log.moat(1);
         log.red("Merge conflicts detected!");
@@ -68,14 +68,24 @@ module.exports = function(options) {
           log.moat(1);
         }
         log.popIndent();
-        return;
+        return {
+          error: "conflicts"
+        };
       }
-      log.moat(1);
-      log.green("Merge success! ");
-      log.gray.dim("Changes are now staged.");
-      log.moat(1);
-      if (!hasKeys(status.staged)) {
-        return;
+      hasChanges = hasKeys(status.staged) || hasKeys(status.tracked);
+      if (!hasChanges) {
+        log.moat(1);
+        log.red("Merge did nothing!");
+        log.moat(0);
+        log.gray.dim("No changes were detected.");
+        log.moat(1);
+        return exec("git reset", {
+          cwd: modulePath
+        }).then(function() {
+          return {
+            error: "empty"
+          };
+        });
       }
       return unstageAll(modulePath).then(function() {
         return exec("git commit", {
@@ -83,6 +93,14 @@ module.exports = function(options) {
         });
       }).then(function() {
         return stageAll(modulePath);
+      }).then(function() {
+        log.moat(1);
+        log.green("Merge success! ");
+        log.gray.dim("Changes are now staged.");
+        log.moat(1);
+        return {
+          error: null
+        };
       });
     });
   });

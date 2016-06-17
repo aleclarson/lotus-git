@@ -40,6 +40,10 @@ module.exports = (options) ->
 
   .then ->
 
+    log.moat 1
+    log.gray "Pushing..."
+    log.moat 1
+
     pushChanges { modulePath, remoteName, force }
 
     .fail (error) ->

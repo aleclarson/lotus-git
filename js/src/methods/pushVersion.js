@@ -28,6 +28,9 @@ module.exports = function(options) {
   message = options.m;
   remoteName = options.remote || options.r || "origin";
   return assertRepo(modulePath).then(function() {
+    log.moat(1);
+    log.gray("Pushing...");
+    log.moat(1);
     return pushVersion({
       modulePath: modulePath,
       version: version,

@@ -1,4 +1,6 @@
-var Finder, STATUS_REGEX, assert, assertTypes, exec, findNewPath, findPath, findStagingStatus, findWorkingStatus, isType, optionTypes, statusBySymbol;
+var Finder, assert, assertTypes, escapeStringRegExp, exec, findNewPath, findPath, findStagingStatus, findWorkingStatus, isType, optionTypes, ref, run, statusMap;
+
+escapeStringRegExp = require("escape-string-regexp");
 
 assertTypes = require("assertTypes");
 
@@ -10,37 +12,7 @@ assert = require("assert");
 
 exec = require("exec");
 
-STATUS_REGEX = /^[\s]*([ARMDU\?\s]{1})([ARMDU\?\s]{1}) ([^\s]+)( \-\> ([^\s]+))?/;
-
-findStagingStatus = Finder({
-  regex: STATUS_REGEX,
-  group: 1
-});
-
-findWorkingStatus = Finder({
-  regex: STATUS_REGEX,
-  group: 2
-});
-
-findPath = Finder({
-  regex: STATUS_REGEX,
-  group: 3
-});
-
-findNewPath = Finder({
-  regex: STATUS_REGEX,
-  group: 5
-});
-
-statusBySymbol = {
-  "A": "added",
-  "R": "renamed",
-  "M": "modified",
-  "D": "deleted",
-  "U": "unmerged",
-  "?": "untracked",
-  " ": "unmodified"
-};
+run = require("run");
 
 optionTypes = {
   modulePath: String,
@@ -80,6 +52,10 @@ module.exports = function(options) {
       };
       stagingStatus = findStagingStatus(line);
       workingStatus = findWorkingStatus(line);
+      if (stagingStatus === "C") {
+        stagingStatus = "A";
+        file.path = findNewPath(line);
+      }
       if ((stagingStatus === "?") && (workingStatus === "?")) {
         results.untracked.push(file);
         continue;
@@ -94,14 +70,22 @@ module.exports = function(options) {
         delete file.path;
       }
       if ((stagingStatus !== " ") && (stagingStatus !== "?")) {
-        status = statusBySymbol[stagingStatus];
-        assert(status, "Unrecognized status: '" + stagingStatus + "'");
+        status = statusMap[stagingStatus];
+        assert(status, {
+          reason: "Unrecognized status!",
+          stagingStatus: stagingStatus,
+          line: line
+        });
         files = (base = results.staged)[status] != null ? base[status] : base[status] = [];
         files.push(file);
       }
       if ((workingStatus !== " ") && (workingStatus !== "?")) {
-        status = statusBySymbol[workingStatus];
-        assert(status, "Unrecognized status: '" + workingStatus + "'");
+        status = statusMap[workingStatus];
+        assert(status, {
+          reason: "Unrecognized status!",
+          workingStatus: workingStatus,
+          line: line
+        });
         files = (base1 = results.tracked)[status] != null ? base1[status] : base1[status] = [];
         files.push(file);
       }
@@ -109,5 +93,40 @@ module.exports = function(options) {
     return results;
   });
 };
+
+ref = run(function() {
+  var charRegex, chars, regex, statusMap;
+  statusMap = {
+    "A": "added",
+    "C": "copied",
+    "R": "renamed",
+    "M": "modified",
+    "D": "deleted",
+    "U": "unmerged",
+    "?": "untracked"
+  };
+  chars = Object.keys(statusMap);
+  charRegex = "([" + escapeStringRegExp(chars.join("")) + "\\s]{1})";
+  regex = RegExp(["^[\\s]*", charRegex, charRegex, " ", "([^\\s]+)", "( -> ([^\\s]+))?"].join(""));
+  return {
+    statusMap: statusMap,
+    findStagingStatus: Finder({
+      regex: regex,
+      group: 1
+    }),
+    findWorkingStatus: Finder({
+      regex: regex,
+      group: 2
+    }),
+    findPath: Finder({
+      regex: regex,
+      group: 3
+    }),
+    findNewPath: Finder({
+      regex: regex,
+      group: 5
+    })
+  };
+}), statusMap = ref.statusMap, findStagingStatus = ref.findStagingStatus, findWorkingStatus = ref.findWorkingStatus, findPath = ref.findPath, findNewPath = ref.findNewPath;
 
 //# sourceMappingURL=../../../map/src/core/getStatus.map

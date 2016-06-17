@@ -1,25 +1,11 @@
 
+escapeStringRegExp = require "escape-string-regexp"
 assertTypes = require "assertTypes"
 Finder = require "finder"
 isType = require "isType"
 assert = require "assert"
 exec = require "exec"
-
-STATUS_REGEX = /^[\s]*([ARMDU\?\s]{1})([ARMDU\?\s]{1}) ([^\s]+)( \-\> ([^\s]+))?/
-
-findStagingStatus = Finder { regex: STATUS_REGEX, group: 1 }
-findWorkingStatus = Finder { regex: STATUS_REGEX, group: 2 }
-findPath = Finder { regex: STATUS_REGEX, group: 3 }
-findNewPath = Finder { regex: STATUS_REGEX, group: 5 }
-
-statusBySymbol =
-  "A": "added"
-  "R": "renamed"
-  "M": "modified"
-  "D": "deleted"
-  "U": "unmerged"
-  "?": "untracked"
-  " ": "unmodified"
+run = require "run"
 
 optionTypes =
   modulePath: String
@@ -57,6 +43,11 @@ module.exports = (options) ->
       stagingStatus = findStagingStatus line
       workingStatus = findWorkingStatus line
 
+      # Pretend "copied" files are simply "added".
+      if stagingStatus is "C"
+        stagingStatus = "A"
+        file.path = findNewPath line
+
       if (stagingStatus is "?") and (workingStatus is "?")
         results.untracked.push file
         continue
@@ -71,15 +62,46 @@ module.exports = (options) ->
         delete file.path
 
       if (stagingStatus isnt " ") and (stagingStatus isnt "?")
-        status = statusBySymbol[stagingStatus]
-        assert status, "Unrecognized status: '#{stagingStatus}'"
+        status = statusMap[stagingStatus]
+        assert status, { reason: "Unrecognized status!", stagingStatus, line }
         files = results.staged[status] ?= []
         files.push file
 
       if (workingStatus isnt " ") and (workingStatus isnt "?")
-        status = statusBySymbol[workingStatus]
-        assert status, "Unrecognized status: '#{workingStatus}'"
+        status = statusMap[workingStatus]
+        assert status, { reason: "Unrecognized status!", workingStatus, line }
         files = results.tracked[status] ?= []
         files.push file
 
     return results
+
+{ statusMap, findStagingStatus, findWorkingStatus, findPath, findNewPath } = run ->
+
+  statusMap =
+    "A": "added"
+    "C": "copied"
+    "R": "renamed"
+    "M": "modified"
+    "D": "deleted"
+    "U": "unmerged"
+    "?": "untracked"
+
+  chars = Object.keys statusMap
+  charRegex = "([" + escapeStringRegExp(chars.join "") + "\\s]{1})"
+
+  regex = RegExp [
+    "^[\\s]*"
+    charRegex          # The 'staging status'
+    charRegex          # The 'working status'
+    " "
+    "([^\\s]+)"        # The 'path'
+    "( -> ([^\\s]+))?" # The 'new path' (optional)
+  ].join ""
+
+  return {
+    statusMap
+    findStagingStatus: Finder { regex, group: 1 }
+    findWorkingStatus: Finder { regex, group: 2 }
+    findPath: Finder { regex, group: 3 }
+    findNewPath: Finder { regex, group: 5 }
+  }

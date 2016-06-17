@@ -36,6 +36,9 @@ module.exports = function(options) {
     message = getDateString() + (message ? log.ln + message : "");
     return addCommit(modulePath, message);
   }).then(function() {
+    log.moat(1);
+    log.gray("Pushing...");
+    log.moat(1);
     return pushChanges({
       modulePath: modulePath,
       remoteName: remoteName,

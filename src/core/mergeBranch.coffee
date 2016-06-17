@@ -22,7 +22,7 @@ module.exports = (options) ->
 
   .then ->
     return if not toBranch
-    changeBranch { modulePath, branchName: toBranch }
+    changeBranch modulePath, toBranch
 
   .then ->
     args = [ fromBranch, "--no-commit" ]

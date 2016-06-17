@@ -1,8 +1,11 @@
 
 assertTypes = require "assertTypes"
+isType = require "isType"
 exec = require "exec"
 
+getCurrentBranch = require "./getCurrentBranch"
 hasChanges = require "./hasChanges"
+hasBranch = require "./hasBranch"
 
 optionTypes =
   modulePath: String
@@ -10,6 +13,11 @@ optionTypes =
   force: Boolean.Maybe
 
 module.exports = (options) ->
+
+  if isType options, String
+    options =
+      modulePath: arguments[0]
+      branchName: arguments[1]
 
   assertTypes options, optionTypes
 
@@ -44,5 +52,9 @@ module.exports = (options) ->
 
       exec "git checkout", args, cwd: modulePath
 
-    .then ->
-      currentBranch
+      .fail (error) ->
+
+        if /Switched to branch/.test error.message
+          return # 'git checkout' incorrectly prints to 'stderr'
+
+        throw error

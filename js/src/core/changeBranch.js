@@ -1,10 +1,16 @@
-var assertTypes, exec, hasChanges, optionTypes;
+var assertTypes, exec, getCurrentBranch, hasBranch, hasChanges, isType, optionTypes;
 
 assertTypes = require("assertTypes");
 
+isType = require("isType");
+
 exec = require("exec");
 
+getCurrentBranch = require("./getCurrentBranch");
+
 hasChanges = require("./hasChanges");
+
+hasBranch = require("./hasBranch");
 
 optionTypes = {
   modulePath: String,
@@ -14,6 +20,12 @@ optionTypes = {
 
 module.exports = function(options) {
   var branchName, force, modulePath;
+  if (isType(options, String)) {
+    options = {
+      modulePath: arguments[0],
+      branchName: arguments[1]
+    };
+  }
   assertTypes(options, optionTypes);
   modulePath = options.modulePath, branchName = options.branchName, force = options.force;
   return getCurrentBranch(modulePath).then(function(currentBranch) {
@@ -41,9 +53,12 @@ module.exports = function(options) {
       }
       return exec("git checkout", args, {
         cwd: modulePath
+      }).fail(function(error) {
+        if (/Switched to branch/.test(error.message)) {
+          return;
+        }
+        throw error;
       });
-    }).then(function() {
-      return currentBranch;
     });
   });
 };

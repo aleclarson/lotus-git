@@ -60,14 +60,17 @@ module.exports = (options) ->
           log.white path
           log.moat 1
         log.popIndent()
-        return
+        return { error: "conflicts" }
 
-      log.moat 1
-      log.green "Merge success! "
-      log.gray.dim "Changes are now staged."
-      log.moat 1
-
-      return if not hasKeys status.staged
+      hasChanges = hasKeys(status.staged) or hasKeys(status.tracked)
+      if not hasChanges
+        log.moat 1
+        log.red "Merge did nothing!"
+        log.moat 0
+        log.gray.dim "No changes were detected."
+        log.moat 1
+        return exec "git reset", cwd: modulePath
+        .then -> { error: "empty" }
 
       unstageAll modulePath
 
@@ -76,3 +79,12 @@ module.exports = (options) ->
 
       .then ->
         stageAll modulePath
+
+      .then ->
+
+        log.moat 1
+        log.green "Merge success! "
+        log.gray.dim "Changes are now staged."
+        log.moat 1
+
+        { error: null }

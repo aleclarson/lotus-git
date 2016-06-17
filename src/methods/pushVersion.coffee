@@ -28,6 +28,9 @@ module.exports = (options) ->
   assertRepo modulePath
 
   .then ->
+    log.moat 1
+    log.gray "Pushing..."
+    log.moat 1
     pushVersion { modulePath, version, remoteName, message, force }
 
   .then ->
