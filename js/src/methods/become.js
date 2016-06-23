@@ -1,39 +1,27 @@
-var assertClean, assertRepo, exec, getBranches, getStatus, hasKeys, log, mergeBranch, stageAll, unstageAll;
+var exec, git, hasKeys, log;
 
 hasKeys = require("hasKeys");
 
 exec = require("exec");
 
+git = require("git-utils");
+
 log = require("log");
-
-assertClean = require("../core/assertClean");
-
-mergeBranch = require("../core/mergeBranch");
-
-getBranches = require("../core/getBranches");
-
-unstageAll = require("../core/unstageAll");
-
-assertRepo = require("../core/assertRepo");
-
-getStatus = require("../core/getStatus");
-
-stageAll = require("../core/stageAll");
 
 module.exports = function(options) {
   var force, fromBranch, modulePath;
   modulePath = process.cwd();
   fromBranch = options._.shift();
   force = options.force != null ? options.force : options.force = options.f;
-  return assertRepo(modulePath).then(function() {
-    return assertClean(modulePath);
+  return git.assertRepo(modulePath).then(function() {
+    return git.assertClean(modulePath);
   }).then(function() {
     if (!fromBranch) {
       log.moat(1);
       log.red("Error: ");
       log.white("Must provide a branch name!");
       log.moat(1);
-      return getBranches(modulePath).then(function(branches) {
+      return git.getBranches(modulePath).then(function(branches) {
         var branchName, i, len;
         log.plusIndent(2);
         log.moat(1);
@@ -48,12 +36,12 @@ module.exports = function(options) {
         return log.popIndent();
       });
     }
-    return mergeBranch({
+    return git.mergeBranch({
       modulePath: modulePath,
       fromBranch: fromBranch,
       force: force
     }).then(function() {
-      return getStatus(modulePath);
+      return git.getStatus(modulePath);
     }).then(function(status) {
       var hasChanges, i, len, path, ref;
       if (status.unmerged.length) {
@@ -87,12 +75,12 @@ module.exports = function(options) {
           };
         });
       }
-      return unstageAll(modulePath).then(function() {
+      return git.unstageAll(modulePath).then(function() {
         return exec("git commit", {
           cwd: modulePath
         });
       }).then(function() {
-        return stageAll(modulePath);
+        return git.stageAll(modulePath);
       }).then(function() {
         log.moat(1);
         log.green("Merge success! ");

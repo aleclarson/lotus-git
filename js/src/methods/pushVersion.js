@@ -1,16 +1,10 @@
-var assertRepo, getCurrentBranch, getLatestCommit, log, pushVersion, semver;
+var git, log, semver;
 
 semver = require("node-semver");
 
+git = require("git-utils");
+
 log = require("log");
-
-getCurrentBranch = require("../core/getCurrentBranch");
-
-getLatestCommit = require("../core/getLatestCommit");
-
-pushVersion = require("../core/pushVersion");
-
-assertRepo = require("../core/assertRepo");
 
 module.exports = function(options) {
   var force, message, modulePath, remoteName, version;
@@ -27,11 +21,11 @@ module.exports = function(options) {
   force = options.force != null ? options.force : options.force = options.f;
   message = options.m;
   remoteName = options.remote || options.r || "origin";
-  return assertRepo(modulePath).then(function() {
+  return git.assertRepo(modulePath).then(function() {
     log.moat(1);
     log.gray("Pushing...");
     log.moat(1);
-    return pushVersion({
+    return git.pushVersion({
       modulePath: modulePath,
       version: version,
       remoteName: remoteName,
@@ -39,9 +33,9 @@ module.exports = function(options) {
       force: force
     });
   }).then(function() {
-    return getCurrentBranch(modulePath);
+    return git.getCurrentBranch(modulePath);
   }).then(function(currentBranch) {
-    return getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
+    return git.getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
       log.moat(1);
       log.green("Push success! ");
       log.gray.dim(remoteName + "/" + currentBranch);

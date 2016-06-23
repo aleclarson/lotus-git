@@ -4,9 +4,8 @@ isType = require "isType"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
+git = require "git-utils"
 log = require "log"
-
-getTags = require "../core/getTags"
 
 module.exports = (options) ->
 
@@ -17,7 +16,7 @@ module.exports = (options) ->
 
   modulePath = Module.resolvePath modulePath
 
-  getTags modulePath
+  git.getTags modulePath
 
   .then (tags) ->
 

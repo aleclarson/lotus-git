@@ -1,4 +1,4 @@
-var Path, Promise, errorConfig, getBranches, log, printBranches, sync;
+var Path, Promise, errorConfig, git, log, printBranches, sync;
 
 Promise = require("Promise");
 
@@ -6,9 +6,9 @@ Path = require("path");
 
 sync = require("sync");
 
-log = require("log");
+git = require("git-utils");
 
-getBranches = require("../core/getBranches");
+log = require("log");
 
 module.exports = function(options) {
   var Module, mod, mods, moduleName, modulePath;
@@ -27,9 +27,7 @@ module.exports = function(options) {
 };
 
 printBranches = function(mod) {
-  return getBranches({
-    modulePath: mod.path
-  }).then(function(branches) {
+  return git.getBranches(mod.path).then(function(branches) {
     if (branches.length === 0) {
       return;
     }

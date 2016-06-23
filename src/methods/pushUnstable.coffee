@@ -1,14 +1,6 @@
 
+git = require "git-utils"
 log = require "log"
-
-undoLatestCommit = require "../core/undoLatestCommit"
-getCurrentBranch = require "../core/getCurrentBranch"
-getLatestCommit = require "../core/getLatestCommit"
-assertStaged = require "../core/assertStaged"
-pushChanges = require "../core/pushChanges"
-assertRepo = require "../core/assertRepo"
-addCommit = require "../core/addCommit"
-stageAll = require "../core/stageAll"
 
 optionTypes =
   modulePath: String
@@ -22,13 +14,13 @@ module.exports = (options) ->
   message = options.m
   remoteName = options.remote or options.r or "origin"
 
-  assertRepo modulePath
+  git.assertRepo modulePath
 
   .then ->
-    stageAll modulePath
+    git.stageAll modulePath
 
   .then ->
-    assertStaged modulePath
+    git.assertStaged modulePath
 
   .then ->
 
@@ -36,7 +28,7 @@ module.exports = (options) ->
       if message then log.ln + message
       else ""
 
-    addCommit modulePath, message
+    git.addCommit modulePath, message
 
   .then ->
 
@@ -44,23 +36,23 @@ module.exports = (options) ->
     log.gray "Pushing..."
     log.moat 1
 
-    pushChanges { modulePath, remoteName, force }
+    git.pushChanges { modulePath, remoteName, force }
 
     .fail (error) ->
 
       # Force an upstream branch to exist. Is this possibly dangerous?
       if /^fatal: The current branch [^\s]+ has no upstream branch/.test error.message
-        return pushChanges { modulePath, remoteName, force, upstream: yes }
+        return git.pushChanges { modulePath, remoteName, force, upstream: yes }
 
       throw error
 
     .then ->
 
-      getCurrentBranch modulePath
+      git.getCurrentBranch modulePath
 
       .then (currentBranch) ->
 
-        getLatestCommit modulePath, remoteName, currentBranch
+        git.getLatestCommit modulePath, remoteName, currentBranch
 
         .then (commit) ->
           log.moat 1
@@ -73,7 +65,7 @@ module.exports = (options) ->
 
     .fail (error) ->
 
-      undoLatestCommit modulePath
+      git.undoLatestCommit modulePath
 
       .then ->
 

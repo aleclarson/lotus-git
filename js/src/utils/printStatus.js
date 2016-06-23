@@ -76,4 +76,4 @@ printPaths = function(status, color, files) {
   return log.moat(1);
 };
 
-//# sourceMappingURL=../../../map/src/core/printStatus.map
+//# sourceMappingURL=../../../map/src/utils/printStatus.map

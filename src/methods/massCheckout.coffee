@@ -2,11 +2,10 @@
 Promise = require "Promise"
 inArray = require "in-array"
 isType = require "isType"
+git = require "git-utils"
 log = require "log"
 
-getBranches = require "../core/getBranches"
-printStatus = require "../core/printStatus"
-getStatus = require "../core/getStatus"
+printStatus = require "../utils/printStatus"
 
 module.exports = (options) ->
 
@@ -19,7 +18,7 @@ module.exports = (options) ->
 
   Promise.map mods, (mod) ->
 
-    getBranches { modulePath: mod.path }
+    git.getBranches { modulePath: mod.path }
 
     .then (branches) ->
 
@@ -33,7 +32,7 @@ module.exports = (options) ->
       unless inArray branches, newBranch
         return null
 
-      getStatus mod.path
+      git.getStatus mod.path
 
       .then (results) ->
 

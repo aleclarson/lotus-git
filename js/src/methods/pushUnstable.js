@@ -1,22 +1,8 @@
-var addCommit, assertRepo, assertStaged, getCurrentBranch, getDateString, getLatestCommit, log, optionTypes, pushChanges, stageAll, undoLatestCommit;
+var getDateString, git, log, optionTypes;
+
+git = require("git-utils");
 
 log = require("log");
-
-undoLatestCommit = require("../core/undoLatestCommit");
-
-getCurrentBranch = require("../core/getCurrentBranch");
-
-getLatestCommit = require("../core/getLatestCommit");
-
-assertStaged = require("../core/assertStaged");
-
-pushChanges = require("../core/pushChanges");
-
-assertRepo = require("../core/assertRepo");
-
-addCommit = require("../core/addCommit");
-
-stageAll = require("../core/stageAll");
 
 optionTypes = {
   modulePath: String
@@ -28,24 +14,24 @@ module.exports = function(options) {
   force = options.force != null ? options.force : options.force = options.f;
   message = options.m;
   remoteName = options.remote || options.r || "origin";
-  return assertRepo(modulePath).then(function() {
-    return stageAll(modulePath);
+  return git.assertRepo(modulePath).then(function() {
+    return git.stageAll(modulePath);
   }).then(function() {
-    return assertStaged(modulePath);
+    return git.assertStaged(modulePath);
   }).then(function() {
     message = getDateString() + (message ? log.ln + message : "");
-    return addCommit(modulePath, message);
+    return git.addCommit(modulePath, message);
   }).then(function() {
     log.moat(1);
     log.gray("Pushing...");
     log.moat(1);
-    return pushChanges({
+    return git.pushChanges({
       modulePath: modulePath,
       remoteName: remoteName,
       force: force
     }).fail(function(error) {
       if (/^fatal: The current branch [^\s]+ has no upstream branch/.test(error.message)) {
-        return pushChanges({
+        return git.pushChanges({
           modulePath: modulePath,
           remoteName: remoteName,
           force: force,
@@ -54,8 +40,8 @@ module.exports = function(options) {
       }
       throw error;
     }).then(function() {
-      return getCurrentBranch(modulePath).then(function(currentBranch) {
-        return getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
+      return git.getCurrentBranch(modulePath).then(function(currentBranch) {
+        return git.getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
           log.moat(1);
           log.green("Push success! ");
           log.gray.dim(remoteName + "/" + currentBranch);
@@ -66,7 +52,7 @@ module.exports = function(options) {
         });
       });
     }).fail(function(error) {
-      return undoLatestCommit(modulePath).then(function() {
+      return git.undoLatestCommit(modulePath).then(function() {
         if (error.message === "Must force push to overwrite remote commits!") {
           log.moat(1);
           log.red("Push failed!");

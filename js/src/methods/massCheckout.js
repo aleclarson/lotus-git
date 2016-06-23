@@ -1,4 +1,4 @@
-var Promise, getBranches, getStatus, inArray, isType, log, printStatus;
+var Promise, git, inArray, isType, log, printStatus;
 
 Promise = require("Promise");
 
@@ -6,13 +6,11 @@ inArray = require("in-array");
 
 isType = require("isType");
 
+git = require("git-utils");
+
 log = require("log");
 
-getBranches = require("../core/getBranches");
-
-printStatus = require("../core/printStatus");
-
-getStatus = require("../core/getStatus");
+printStatus = require("../utils/printStatus");
 
 module.exports = function(options) {
   var Module, mods, newBranch;
@@ -21,7 +19,7 @@ module.exports = function(options) {
   assertType(newBranch, String);
   mods = Module.crawl(lotus.path);
   return Promise.map(mods, function(mod) {
-    return getBranches({
+    return git.getBranches({
       modulePath: mod.path
     }).then(function(branches) {
       if (branches.current === newBranch) {
@@ -34,7 +32,7 @@ module.exports = function(options) {
       if (!inArray(branches, newBranch)) {
         return null;
       }
-      return getStatus(mod.path).then(function(results) {
+      return git.getStatus(mod.path).then(function(results) {
         var ignore, ignored, stash;
         if (!results) {
           return null;

@@ -1,4 +1,4 @@
-var Path, Promise, exec, getTags, isType, log, sync;
+var Path, Promise, exec, git, isType, log, sync;
 
 Promise = require("Promise");
 
@@ -10,9 +10,9 @@ sync = require("sync");
 
 exec = require("exec");
 
-log = require("log");
+git = require("git-utils");
 
-getTags = require("../core/getTags");
+log = require("log");
 
 module.exports = function(options) {
   var Module, modulePath;
@@ -20,7 +20,7 @@ module.exports = function(options) {
   modulePath = options._.shift();
   assert(modulePath, "Must provide a 'modulePath'!");
   modulePath = Module.resolvePath(modulePath);
-  return getTags(modulePath).then(function(tags) {
+  return git.getTags(modulePath).then(function(tags) {
     if (!tags.length) {
       log.moat(1);
       log.gray.dim("No tags exist.");

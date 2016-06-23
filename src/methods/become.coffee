@@ -1,15 +1,8 @@
 
 hasKeys = require "hasKeys"
 exec = require "exec"
+git = require "git-utils"
 log = require "log"
-
-assertClean = require "../core/assertClean"
-mergeBranch = require "../core/mergeBranch"
-getBranches = require "../core/getBranches"
-unstageAll = require "../core/unstageAll"
-assertRepo = require "../core/assertRepo"
-getStatus = require "../core/getStatus"
-stageAll = require "../core/stageAll"
 
 module.exports = (options) ->
 
@@ -19,10 +12,10 @@ module.exports = (options) ->
 
   force = options.force ?= options.f
 
-  assertRepo modulePath
+  git.assertRepo modulePath
 
   .then ->
-    assertClean modulePath
+    git.assertClean modulePath
 
   .then ->
 
@@ -33,7 +26,7 @@ module.exports = (options) ->
       log.white "Must provide a branch name!"
       log.moat 1
 
-      return getBranches modulePath
+      return git.getBranches modulePath
 
       .then (branches) ->
         log.plusIndent 2
@@ -44,10 +37,10 @@ module.exports = (options) ->
           log.moat 1
         log.popIndent()
 
-    mergeBranch { modulePath, fromBranch, force }
+    git.mergeBranch { modulePath, fromBranch, force }
 
     .then ->
-      getStatus modulePath
+      git.getStatus modulePath
 
     .then (status) ->
 
@@ -72,13 +65,13 @@ module.exports = (options) ->
         return exec "git reset", cwd: modulePath
         .then -> { error: "empty" }
 
-      unstageAll modulePath
+      git.unstageAll modulePath
 
       .then -> # We must use 'git commit' to conclude the merge.
         exec "git commit", cwd: modulePath
 
       .then ->
-        stageAll modulePath
+        git.stageAll modulePath
 
       .then ->
 

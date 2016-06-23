@@ -2,9 +2,8 @@
 Promise = require "Promise"
 Path = require "path"
 sync = require "sync"
+git = require "git-utils"
 log = require "log"
-
-getBranches = require "../core/getBranches"
 
 module.exports = (options) ->
 
@@ -24,7 +23,7 @@ module.exports = (options) ->
 
 printBranches = (mod) ->
 
-  getBranches { modulePath: mod.path }
+  git.getBranches mod.path
 
   .then (branches) ->
     return if branches.length is 0

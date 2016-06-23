@@ -1,7 +1,7 @@
 
-changeBranch = require "../core/changeBranch"
+git = require "git-utils"
+
 pushVersion = require "./pushVersion"
-assertRepo = require "../core/assertRepo"
 become = require "./become"
 
 module.exports = (options) ->
@@ -12,9 +12,9 @@ module.exports = (options) ->
 
   force = options.force ?= options.f
 
-  assertRepo modulePath
+  git.assertRepo modulePath
 
-  .then -> changeBranch modulePath, "master"
+  .then -> git.changeBranch modulePath, "master"
 
   .then ->
 
@@ -25,7 +25,7 @@ module.exports = (options) ->
   .then ({ error }) ->
 
     if error is "empty"
-      return changeBranch modulePath, "unstable"
+      return git.changeBranch modulePath, "unstable"
 
     if error is "conflicts"
       return
@@ -34,10 +34,10 @@ module.exports = (options) ->
 
     pushVersion { _, force }
 
-    .then -> changeBranch modulePath, "unstable"
+    .then -> git.changeBranch modulePath, "unstable"
 
   .fail (error) ->
 
-    changeBranch modulePath, "unstable"
+    git.changeBranch modulePath, "unstable"
 
     .then -> throw error

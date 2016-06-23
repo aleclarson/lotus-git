@@ -1,10 +1,8 @@
-var assertRepo, become, changeBranch, pushVersion;
+var become, git, pushVersion;
 
-changeBranch = require("../core/changeBranch");
+git = require("git-utils");
 
 pushVersion = require("./pushVersion");
-
-assertRepo = require("../core/assertRepo");
 
 become = require("./become");
 
@@ -13,8 +11,8 @@ module.exports = function(options) {
   modulePath = process.cwd();
   version = options._.shift();
   force = options.force != null ? options.force : options.force = options.f;
-  return assertRepo(modulePath).then(function() {
-    return changeBranch(modulePath, "master");
+  return git.assertRepo(modulePath).then(function() {
+    return git.changeBranch(modulePath, "master");
   }).then(function() {
     var _;
     _ = ["unstable"];
@@ -26,7 +24,7 @@ module.exports = function(options) {
     var _, error;
     error = arg.error;
     if (error === "empty") {
-      return changeBranch(modulePath, "unstable");
+      return git.changeBranch(modulePath, "unstable");
     }
     if (error === "conflicts") {
       return;
@@ -36,10 +34,10 @@ module.exports = function(options) {
       _: _,
       force: force
     }).then(function() {
-      return changeBranch(modulePath, "unstable");
+      return git.changeBranch(modulePath, "unstable");
     });
   }).fail(function(error) {
-    return changeBranch(modulePath, "unstable").then(function() {
+    return git.changeBranch(modulePath, "unstable").then(function() {
       throw error;
     });
   });

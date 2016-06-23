@@ -1,16 +1,12 @@
 
-{ trackFailure } = require "failure"
-
 Promise = require "Promise"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
+git = require "git-utils"
 log = require "log"
 
-printStatus = require "../core/printStatus"
-assertRepo = require "../core/assertRepo"
-getStatus = require "../core/getStatus"
-isRepo = require "../core/isRepo"
+printStatus = require "../utils/printStatus"
 
 module.exports = (options) ->
 
@@ -24,10 +20,10 @@ module.exports = (options) ->
 
     modulePath = Module.resolvePath modulePath
 
-    return assertRepo modulePath
+    return git.assertRepo modulePath
 
     .then ->
-      getStatus { modulePath, parseOutput }
+      git.getStatus { modulePath, parseOutput }
 
     .then (results) ->
       moduleName = Path.relative lotus.path, modulePath
@@ -50,9 +46,9 @@ module.exports = (options) ->
 
   Promise.map mods, (mod) ->
 
-    return if not isRepo mod.path
+    return if not git.isRepo mod.path
 
-    getStatus { modulePath: mod.path, parseOutput }
+    git.getStatus { modulePath: mod.path, parseOutput }
 
     .then (status) ->
 
@@ -63,9 +59,6 @@ module.exports = (options) ->
         return
 
       printStatus mod.name, status
-
-    .fail (error) ->
-      trackFailure error, { mod }
 
   .then ->
     log.moat 1 if not parseOutput

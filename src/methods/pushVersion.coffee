@@ -1,11 +1,7 @@
 
 semver = require "node-semver"
+git = require "git-utils"
 log = require "log"
-
-getCurrentBranch = require "../core/getCurrentBranch"
-getLatestCommit = require "../core/getLatestCommit"
-pushVersion = require "../core/pushVersion"
-assertRepo = require "../core/assertRepo"
 
 module.exports = (options) ->
 
@@ -25,20 +21,20 @@ module.exports = (options) ->
   message = options.m
   remoteName = options.remote or options.r or "origin"
 
-  assertRepo modulePath
+  git.assertRepo modulePath
 
   .then ->
     log.moat 1
     log.gray "Pushing..."
     log.moat 1
-    pushVersion { modulePath, version, remoteName, message, force }
+    git.pushVersion { modulePath, version, remoteName, message, force }
 
   .then ->
-    getCurrentBranch modulePath
+    git.getCurrentBranch modulePath
 
   .then (currentBranch) ->
 
-    getLatestCommit modulePath, remoteName, currentBranch
+    git.getLatestCommit modulePath, remoteName, currentBranch
 
     .then (commit) ->
       log.moat 1

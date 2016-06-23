@@ -1,6 +1,4 @@
-var Path, Promise, assertRepo, exec, getStatus, isRepo, log, printStatus, sync, trackFailure;
-
-trackFailure = require("failure").trackFailure;
+var Path, Promise, exec, git, log, printStatus, sync;
 
 Promise = require("Promise");
 
@@ -10,15 +8,11 @@ sync = require("sync");
 
 exec = require("exec");
 
+git = require("git-utils");
+
 log = require("log");
 
-printStatus = require("../core/printStatus");
-
-assertRepo = require("../core/assertRepo");
-
-getStatus = require("../core/getStatus");
-
-isRepo = require("../core/isRepo");
+printStatus = require("../utils/printStatus");
 
 module.exports = function(options) {
   var Module, mods, modulePath, parseOutput;
@@ -27,8 +21,8 @@ module.exports = function(options) {
   modulePath = options._.shift();
   if (modulePath) {
     modulePath = Module.resolvePath(modulePath);
-    return assertRepo(modulePath).then(function() {
-      return getStatus({
+    return git.assertRepo(modulePath).then(function() {
+      return git.getStatus({
         modulePath: modulePath,
         parseOutput: parseOutput
       });
@@ -52,10 +46,10 @@ module.exports = function(options) {
   log.cyan(lotus.path);
   log.moat(1);
   return Promise.map(mods, function(mod) {
-    if (!isRepo(mod.path)) {
+    if (!git.isRepo(mod.path)) {
       return;
     }
-    return getStatus({
+    return git.getStatus({
       modulePath: mod.path,
       parseOutput: parseOutput
     }).then(function(status) {
@@ -68,10 +62,6 @@ module.exports = function(options) {
         return;
       }
       return printStatus(mod.name, status);
-    }).fail(function(error) {
-      return trackFailure(error, {
-        mod: mod
-      });
     });
   }).then(function() {
     if (!parseOutput) {
