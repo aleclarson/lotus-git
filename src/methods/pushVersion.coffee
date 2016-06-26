@@ -30,11 +30,11 @@ module.exports = (options) ->
     git.pushVersion { modulePath, version, remoteName, message, force }
 
   .then ->
-    git.getCurrentBranch modulePath
+    git.getBranch modulePath
 
   .then (currentBranch) ->
 
-    git.getLatestCommit modulePath, remoteName, currentBranch
+    git.getHead modulePath, remoteName, currentBranch
 
     .then (commit) ->
       log.moat 1

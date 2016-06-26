@@ -20,18 +20,18 @@ module.exports = function(options) {
     return git.assertStaged(modulePath);
   }).then(function() {
     message = getDateString() + (message ? log.ln + message : "");
-    return git.addCommit(modulePath, message);
+    return git.pushCommit(modulePath, message);
   }).then(function() {
     log.moat(1);
     log.gray("Pushing...");
     log.moat(1);
-    return git.pushChanges({
+    return git.pushHead({
       modulePath: modulePath,
       remoteName: remoteName,
       force: force
     }).fail(function(error) {
       if (/^fatal: The current branch [^\s]+ has no upstream branch/.test(error.message)) {
-        return git.pushChanges({
+        return git.pushHead({
           modulePath: modulePath,
           remoteName: remoteName,
           force: force,
@@ -40,8 +40,8 @@ module.exports = function(options) {
       }
       throw error;
     }).then(function() {
-      return git.getCurrentBranch(modulePath).then(function(currentBranch) {
-        return git.getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
+      return git.getBranch(modulePath).then(function(currentBranch) {
+        return git.getHead(modulePath, remoteName, currentBranch).then(function(commit) {
           log.moat(1);
           log.green("Push success! ");
           log.gray.dim(remoteName + "/" + currentBranch);
@@ -52,7 +52,7 @@ module.exports = function(options) {
         });
       });
     }).fail(function(error) {
-      return git.undoLatestCommit(modulePath).then(function() {
+      return git.popCommit(modulePath).then(function() {
         if (error.message === "Must force push to overwrite remote commits!") {
           log.moat(1);
           log.red("Push failed!");

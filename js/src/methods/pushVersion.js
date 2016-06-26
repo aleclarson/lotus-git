@@ -33,9 +33,9 @@ module.exports = function(options) {
       force: force
     });
   }).then(function() {
-    return git.getCurrentBranch(modulePath);
+    return git.getBranch(modulePath);
   }).then(function(currentBranch) {
-    return git.getLatestCommit(modulePath, remoteName, currentBranch).then(function(commit) {
+    return git.getHead(modulePath, remoteName, currentBranch).then(function(commit) {
       log.moat(1);
       log.green("Push success! ");
       log.gray.dim(remoteName + "/" + currentBranch);

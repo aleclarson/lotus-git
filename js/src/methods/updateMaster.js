@@ -12,7 +12,7 @@ module.exports = function(options) {
   version = options._.shift();
   force = options.force != null ? options.force : options.force = options.f;
   return git.assertRepo(modulePath).then(function() {
-    return git.changeBranch(modulePath, "master");
+    return git.setBranch(modulePath, "master");
   }).then(function() {
     var _;
     _ = ["unstable"];
@@ -24,7 +24,7 @@ module.exports = function(options) {
     var _, error;
     error = arg.error;
     if (error === "empty") {
-      return git.changeBranch(modulePath, "unstable");
+      return git.setBranch(modulePath, "unstable");
     }
     if (error === "conflicts") {
       return;
@@ -34,10 +34,10 @@ module.exports = function(options) {
       _: _,
       force: force
     }).then(function() {
-      return git.changeBranch(modulePath, "unstable");
+      return git.setBranch(modulePath, "unstable");
     });
   }).fail(function(error) {
-    return git.changeBranch(modulePath, "unstable").then(function() {
+    return git.setBranch(modulePath, "unstable").then(function() {
       throw error;
     });
   });

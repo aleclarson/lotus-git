@@ -28,7 +28,7 @@ module.exports = (options) ->
       if message then log.ln + message
       else ""
 
-    git.addCommit modulePath, message
+    git.pushCommit modulePath, message
 
   .then ->
 
@@ -36,23 +36,23 @@ module.exports = (options) ->
     log.gray "Pushing..."
     log.moat 1
 
-    git.pushChanges { modulePath, remoteName, force }
+    git.pushHead { modulePath, remoteName, force }
 
     .fail (error) ->
 
       # Force an upstream branch to exist. Is this possibly dangerous?
       if /^fatal: The current branch [^\s]+ has no upstream branch/.test error.message
-        return git.pushChanges { modulePath, remoteName, force, upstream: yes }
+        return git.pushHead { modulePath, remoteName, force, upstream: yes }
 
       throw error
 
     .then ->
 
-      git.getCurrentBranch modulePath
+      git.getBranch modulePath
 
       .then (currentBranch) ->
 
-        git.getLatestCommit modulePath, remoteName, currentBranch
+        git.getHead modulePath, remoteName, currentBranch
 
         .then (commit) ->
           log.moat 1
@@ -65,7 +65,7 @@ module.exports = (options) ->
 
     .fail (error) ->
 
-      git.undoLatestCommit modulePath
+      git.popCommit modulePath
 
       .then ->
 

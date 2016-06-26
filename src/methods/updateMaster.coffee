@@ -14,7 +14,7 @@ module.exports = (options) ->
 
   git.assertRepo modulePath
 
-  .then -> git.changeBranch modulePath, "master"
+  .then -> git.setBranch modulePath, "master"
 
   .then ->
 
@@ -25,7 +25,7 @@ module.exports = (options) ->
   .then ({ error }) ->
 
     if error is "empty"
-      return git.changeBranch modulePath, "unstable"
+      return git.setBranch modulePath, "unstable"
 
     if error is "conflicts"
       return
@@ -34,10 +34,10 @@ module.exports = (options) ->
 
     pushVersion { _, force }
 
-    .then -> git.changeBranch modulePath, "unstable"
+    .then -> git.setBranch modulePath, "unstable"
 
   .fail (error) ->
 
-    git.changeBranch modulePath, "unstable"
+    git.setBranch modulePath, "unstable"
 
     .then -> throw error
