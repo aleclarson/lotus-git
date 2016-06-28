@@ -18,7 +18,7 @@ module.exports = (options) ->
 
   Promise.map mods, (mod) ->
 
-    git.getBranches { modulePath: mod.path }
+    git.getBranches mod.path
 
     .then (branches) ->
 

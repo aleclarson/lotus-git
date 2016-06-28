@@ -1,50 +1,48 @@
-var getDateString, git, log, optionTypes;
+var Repository, getDateString, os;
 
-git = require("git-utils");
+Repository = require("git-repo");
 
-log = require("log");
+os = require("os");
 
-optionTypes = {
-  modulePath: String
-};
-
-module.exports = function(options) {
-  var force, message, modulePath, remoteName;
-  modulePath = process.cwd();
-  force = options.force != null ? options.force : options.force = options.f;
-  message = options.m;
-  remoteName = options.remote || options.r || "origin";
-  return git.assertRepo(modulePath).then(function() {
-    return git.stageAll(modulePath);
+module.exports = function(args) {
+  var options, ref, repo;
+  options = {
+    force: (ref = args.force) != null ? ref : args.f,
+    remote: args.remote || arg.r || "origin",
+    message: args.m
+  };
+  repo = Repository(process.cwd());
+  return repo.stageFiles("*").then(function() {
+    return Promise.assert("No changes were staged!", repo.isStaged());
   }).then(function() {
-    return git.assertStaged(modulePath);
-  }).then(function() {
-    message = getDateString() + (message ? log.ln + message : "");
-    return git.pushCommit(modulePath, message);
+    var message;
+    message = getDateString();
+    if (options.message) {
+      message += os.EOL + message;
+    }
+    return repo.commit(message);
   }).then(function() {
     log.moat(1);
     log.gray("Pushing...");
     log.moat(1);
-    return git.pushHead({
-      modulePath: modulePath,
-      remoteName: remoteName,
-      force: force
+    return repo.pushBranch({
+      force: options.force,
+      remote: options.remote
     }).fail(function(error) {
       if (/^fatal: The current branch [^\s]+ has no upstream branch/.test(error.message)) {
-        return git.pushHead({
-          modulePath: modulePath,
-          remoteName: remoteName,
-          force: force,
+        return repo.pushBranch({
+          force: options.force,
+          remote: options.remote,
           upstream: true
         });
       }
       throw error;
     }).then(function() {
-      return git.getBranch(modulePath).then(function(currentBranch) {
-        return git.getHead(modulePath, remoteName, currentBranch).then(function(commit) {
+      return repo.getBranch().then(function(currentBranch) {
+        return repo.getHead(currentBranch, options.remote).then(function(commit) {
           log.moat(1);
           log.green("Push success! ");
-          log.gray.dim(remoteName + "/" + currentBranch);
+          log.gray.dim(options.remote + "/" + currentBranch);
           log.moat(1);
           log.yellow(commit.id.slice(0, 7));
           log.white(" ", commit.message);
@@ -52,7 +50,7 @@ module.exports = function(options) {
         });
       });
     }).fail(function(error) {
-      return git.popCommit(modulePath).then(function() {
+      return repo.resetBranch("HEAD^").then(function() {
         if (error.message === "Must force push to overwrite remote commits!") {
           log.moat(1);
           log.red("Push failed!");

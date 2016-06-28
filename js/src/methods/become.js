@@ -9,14 +9,16 @@ git = require("git-utils");
 log = require("log");
 
 module.exports = function(options) {
-  var force, fromBranch, modulePath;
+  var force, modulePath, theirs;
   modulePath = process.cwd();
-  fromBranch = options._.shift();
+  theirs = options._.shift();
   force = options.force != null ? options.force : options.force = options.f;
   return git.assertRepo(modulePath).then(function() {
-    return git.assertClean(modulePath);
+    return Promise.assert("The current branch cannot have any uncommitted changes!", function() {
+      return git.isClean(modulePath);
+    });
   }).then(function() {
-    if (!fromBranch) {
+    if (!theirs) {
       log.moat(1);
       log.red("Error: ");
       log.white("Must provide a branch name!");
@@ -36,9 +38,8 @@ module.exports = function(options) {
         return log.popIndent();
       });
     }
-    return git.mergeBranch({
-      modulePath: modulePath,
-      fromBranch: fromBranch,
+    return git.mergeBranch(modulePath, {
+      theirs: theirs,
       force: force
     }).then(function() {
       return git.getStatus(modulePath);
@@ -75,12 +76,12 @@ module.exports = function(options) {
           };
         });
       }
-      return git.unstageAll(modulePath).then(function() {
+      return git.unstageFiles(modulePath, "*").then(function() {
         return exec("git commit", {
           cwd: modulePath
         });
       }).then(function() {
-        return git.stageAll(modulePath);
+        return git.stageFiles(modulePath, "*");
       }).then(function() {
         log.moat(1);
         log.green("Merge success! ");

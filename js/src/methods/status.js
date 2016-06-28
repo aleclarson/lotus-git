@@ -15,16 +15,14 @@ log = require("log");
 printStatus = require("../utils/printStatus");
 
 module.exports = function(options) {
-  var Module, mods, modulePath, parseOutput;
+  var Module, mods, modulePath;
   Module = lotus.Module;
-  parseOutput = options.names !== true;
   modulePath = options._.shift();
   if (modulePath) {
     modulePath = Module.resolvePath(modulePath);
     return git.assertRepo(modulePath).then(function() {
-      return git.getStatus({
-        modulePath: modulePath,
-        parseOutput: parseOutput
+      return git.getStatus(modulePath, {
+        raw: options.names !== true
       });
     }).then(function(results) {
       var moduleName;
@@ -35,7 +33,7 @@ module.exports = function(options) {
     });
   }
   log.clear();
-  if (!parseOutput) {
+  if (options.names) {
     log.moat(1);
   }
   mods = Module.crawl(lotus.path);
@@ -49,11 +47,10 @@ module.exports = function(options) {
     if (!git.isRepo(mod.path)) {
       return;
     }
-    return git.getStatus({
-      modulePath: mod.path,
-      parseOutput: parseOutput
+    return git.getStatus(mod.path, {
+      raw: options.names !== true
     }).then(function(status) {
-      if (!parseOutput) {
+      if (options.names) {
         if (!status.length) {
           return;
         }
@@ -64,7 +61,7 @@ module.exports = function(options) {
       return printStatus(mod.name, status);
     });
   }).then(function() {
-    if (!parseOutput) {
+    if (options.names) {
       return log.moat(1);
     }
   });

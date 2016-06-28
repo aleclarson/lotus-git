@@ -12,8 +12,6 @@ module.exports = (options) ->
 
   { Module } = lotus
 
-  parseOutput = options.names isnt yes
-
   modulePath = options._.shift()
 
   if modulePath
@@ -23,7 +21,8 @@ module.exports = (options) ->
     return git.assertRepo modulePath
 
     .then ->
-      git.getStatus { modulePath, parseOutput }
+      git.getStatus modulePath,
+        raw: options.names isnt yes
 
     .then (results) ->
       moduleName = Path.relative lotus.path, modulePath
@@ -33,7 +32,7 @@ module.exports = (options) ->
       throw error
 
   log.clear()
-  log.moat 1 if not parseOutput
+  log.moat 1 if options.names
 
   mods = Module.crawl lotus.path
 
@@ -48,11 +47,12 @@ module.exports = (options) ->
 
     return if not git.isRepo mod.path
 
-    git.getStatus { modulePath: mod.path, parseOutput }
+    git.getStatus mod.path,
+      raw: options.names isnt yes
 
     .then (status) ->
 
-      if not parseOutput
+      if options.names
         return if not status.length
         log.moat 0
         log.bold mod.name
@@ -61,4 +61,4 @@ module.exports = (options) ->
       printStatus mod.name, status
 
   .then ->
-    log.moat 1 if not parseOutput
+    log.moat 1 if options.names

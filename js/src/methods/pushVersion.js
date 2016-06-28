@@ -6,10 +6,10 @@ git = require("git-utils");
 
 log = require("log");
 
-module.exports = function(options) {
-  var force, message, modulePath, remoteName, version;
+module.exports = function(args) {
+  var modulePath, options, ref, version;
   modulePath = process.cwd();
-  version = options._.shift();
+  version = args._.shift();
   if (!semver.valid(version)) {
     log.moat(1);
     log.red("Error: ");
@@ -18,27 +18,27 @@ module.exports = function(options) {
     log.moat(1);
     return;
   }
-  force = options.force != null ? options.force : options.force = options.f;
-  message = options.m;
-  remoteName = options.remote || options.r || "origin";
+  options = {
+    force: (ref = args.force) != null ? ref : args.f,
+    remote: args.remote || args.r || "origin",
+    message: args.m
+  };
   return git.assertRepo(modulePath).then(function() {
     log.moat(1);
     log.gray("Pushing...");
     log.moat(1);
-    return git.pushVersion({
-      modulePath: modulePath,
-      version: version,
-      remoteName: remoteName,
-      message: message,
-      force: force
+    return git.pushVersion(modulePath, version, {
+      force: options.force,
+      remote: options.remote,
+      message: options.message
     });
   }).then(function() {
     return git.getBranch(modulePath);
   }).then(function(currentBranch) {
-    return git.getHead(modulePath, remoteName, currentBranch).then(function(commit) {
+    return git.getHead(modulePath, currentBranch, options.remote).then(function(commit) {
       log.moat(1);
       log.green("Push success! ");
-      log.gray.dim(remoteName + "/" + currentBranch);
+      log.gray.dim(options.remote + "/" + currentBranch);
       log.moat(1);
       log.yellow(commit.id.slice(0, 7));
       log.white(" ", commit.message);

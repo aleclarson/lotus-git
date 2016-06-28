@@ -3,11 +3,11 @@ semver = require "node-semver"
 git = require "git-utils"
 log = require "log"
 
-module.exports = (options) ->
+module.exports = (args) ->
 
   modulePath = process.cwd()
 
-  version = options._.shift()
+  version = args._.shift()
 
   if not semver.valid version
     log.moat 1
@@ -17,9 +17,10 @@ module.exports = (options) ->
     log.moat 1
     return
 
-  force = options.force ?= options.f
-  message = options.m
-  remoteName = options.remote or options.r or "origin"
+  options =
+    force: args.force ? args.f
+    remote: args.remote or args.r or "origin"
+    message: args.m
 
   git.assertRepo modulePath
 
@@ -27,19 +28,22 @@ module.exports = (options) ->
     log.moat 1
     log.gray "Pushing..."
     log.moat 1
-    git.pushVersion { modulePath, version, remoteName, message, force }
+    git.pushVersion modulePath, version,
+      force: options.force
+      remote: options.remote
+      message: options.message
 
   .then ->
     git.getBranch modulePath
 
   .then (currentBranch) ->
 
-    git.getHead modulePath, remoteName, currentBranch
+    git.getHead modulePath, currentBranch, options.remote
 
     .then (commit) ->
       log.moat 1
       log.green "Push success! "
-      log.gray.dim remoteName + "/" + currentBranch
+      log.gray.dim options.remote + "/" + currentBranch
       log.moat 1
       log.yellow commit.id.slice 0, 7
       log.white " ", commit.message

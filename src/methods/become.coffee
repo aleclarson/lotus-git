@@ -8,18 +8,19 @@ module.exports = (options) ->
 
   modulePath = process.cwd()
 
-  fromBranch = options._.shift()
+  theirs = options._.shift()
 
   force = options.force ?= options.f
 
   git.assertRepo modulePath
 
   .then ->
-    git.assertClean modulePath
+    Promise.assert "The current branch cannot have any uncommitted changes!", ->
+      git.isClean modulePath
 
   .then ->
 
-    if not fromBranch
+    if not theirs
 
       log.moat 1
       log.red "Error: "
@@ -37,7 +38,7 @@ module.exports = (options) ->
           log.moat 1
         log.popIndent()
 
-    git.mergeBranch { modulePath, fromBranch, force }
+    git.mergeBranch modulePath, { theirs, force }
 
     .then ->
       git.getStatus modulePath
@@ -65,13 +66,13 @@ module.exports = (options) ->
         return exec "git reset", cwd: modulePath
         .then -> { error: "empty" }
 
-      git.unstageAll modulePath
+      git.unstageFiles modulePath, "*"
 
       .then -> # We must use 'git commit' to conclude the merge.
         exec "git commit", cwd: modulePath
 
       .then ->
-        git.stageAll modulePath
+        git.stageFiles modulePath, "*"
 
       .then ->
 

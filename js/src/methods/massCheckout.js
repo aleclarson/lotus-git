@@ -19,9 +19,7 @@ module.exports = function(options) {
   assertType(newBranch, String);
   mods = Module.crawl(lotus.path);
   return Promise.map(mods, function(mod) {
-    return git.getBranches({
-      modulePath: mod.path
-    }).then(function(branches) {
+    return git.getBranches(mod.path).then(function(branches) {
       if (branches.current === newBranch) {
         log.moat(1);
         log.yellow(mod.name);

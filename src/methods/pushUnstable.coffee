@@ -1,34 +1,30 @@
 
-git = require "git-utils"
-log = require "log"
-
-optionTypes =
-  modulePath: String
+Repository = require "git-repo"
+os = require "os"
 
 # TODO: Run the 'build' phase of lotus.
-module.exports = (options) ->
+module.exports = (args) ->
 
-  modulePath = process.cwd()
+  options =
+    force: args.force ? args.f
+    remote: args.remote or arg.r or "origin"
+    message: args.m
 
-  force = options.force ?= options.f
-  message = options.m
-  remoteName = options.remote or options.r or "origin"
+  repo = Repository process.cwd()
 
-  git.assertRepo modulePath
-
-  .then ->
-    git.stageAll modulePath
+  repo.stageFiles "*"
 
   .then ->
-    git.assertStaged modulePath
+    Promise.assert "No changes were staged!", repo.isStaged()
 
   .then ->
 
-    message = getDateString() +
-      if message then log.ln + message
-      else ""
+    message = getDateString()
 
-    git.pushCommit modulePath, message
+    if options.message
+      message += os.EOL + message
+
+    repo.commit message
 
   .then ->
 
@@ -36,28 +32,33 @@ module.exports = (options) ->
     log.gray "Pushing..."
     log.moat 1
 
-    git.pushHead { modulePath, remoteName, force }
+    repo.pushBranch
+      force: options.force
+      remote: options.remote
 
     .fail (error) ->
 
       # Force an upstream branch to exist. Is this possibly dangerous?
       if /^fatal: The current branch [^\s]+ has no upstream branch/.test error.message
-        return git.pushHead { modulePath, remoteName, force, upstream: yes }
+        return repo.pushBranch
+          force: options.force
+          remote: options.remote
+          upstream: yes
 
       throw error
 
     .then ->
 
-      git.getBranch modulePath
+      repo.getBranch()
 
       .then (currentBranch) ->
 
-        git.getHead modulePath, remoteName, currentBranch
+        repo.getHead currentBranch, options.remote
 
         .then (commit) ->
           log.moat 1
           log.green "Push success! "
-          log.gray.dim remoteName + "/" + currentBranch
+          log.gray.dim options.remote + "/" + currentBranch
           log.moat 1
           log.yellow commit.id.slice 0, 7
           log.white " ", commit.message
@@ -65,7 +66,7 @@ module.exports = (options) ->
 
     .fail (error) ->
 
-      git.popCommit modulePath
+      repo.resetBranch "HEAD^"
 
       .then ->
 
