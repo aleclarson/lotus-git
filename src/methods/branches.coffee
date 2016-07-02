@@ -7,19 +7,14 @@ log = require "log"
 
 module.exports = (options) ->
 
-  { Module } = lotus
+  if moduleName = options._.shift()
+    return lotus.Module.load moduleName
+      .then printBranches
 
-  modulePath = options._.shift()
-
-  if modulePath
-    modulePath = Module.resolvePath modulePath
-    moduleName = Path.basename modulePath
-    mod = Module moduleName
-    return printBranches mod
-
-  mods = Module.crawl lotus.path
-  Promise.chain mods, (mod) ->
-    printBranches mod
+  return lotus.Module.crawl lotus.path
+    .then (mods) ->
+      Promise.chain mods, (mod) ->
+        printBranches mod
 
 printBranches = (mod) ->
 
@@ -34,11 +29,3 @@ printBranches = (mod) ->
     log.gray.dim branches.join "\n"
     log.popIndent()
     log.moat 1
-
-  .fail (error) ->
-    mod.reportError error, errorConfig
-
-errorConfig =
-  quiet: [
-    "fatal: Not a git repository (or any of the parent directories): .git"
-  ]

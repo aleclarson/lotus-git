@@ -15,33 +15,33 @@ git = require("git-utils");
 log = require("log");
 
 module.exports = function(options) {
-  var Module, modulePath;
-  Module = lotus.Module;
-  modulePath = options._.shift();
-  assert(modulePath, "Must provide a 'modulePath'!");
-  modulePath = Module.resolvePath(modulePath);
-  return git.getTags(modulePath).then(function(tags) {
-    if (!tags.length) {
-      log.moat(1);
-      log.gray.dim("No tags exist.");
-      log.moat(1);
-      return;
-    }
-    return exec("git tag -d", tags, {
-      cwd: modulePath
-    }).then(function() {
-      if (!isType(options.remote, String)) {
+  var moduleName;
+  moduleName = options._.shift();
+  assert(moduleName, "Must provide a 'moduleName'!");
+  return lotus.Module.load(moduleName).then(function(module) {
+    return git.getTags(module.path).then(function(tags) {
+      if (!tags.length) {
+        log.moat(1);
+        log.gray.dim("No tags exist.");
+        log.moat(1);
         return;
       }
-      return Promise.all(sync.map(tags, function(tag) {
-        return exec("git push --delete " + options.remote + " " + tag);
-      }));
-    }).then(function() {
-      log.moat(1);
-      log.white("Deleted ");
-      log.red(tags.length);
-      log.white(" tags!");
-      return log.moat(1);
+      return exec.async("git tag -d", tags, {
+        cwd: module.path
+      }).then(function() {
+        if (!isType(options.remote, String)) {
+          return;
+        }
+        return Promise.all(sync.map(tags, function(tag) {
+          return exec.async("git push --delete " + options.remote + " " + tag);
+        }));
+      }).then(function() {
+        log.moat(1);
+        log.white("Deleted ");
+        log.red(tags.length);
+        log.white(" tags!");
+        return log.moat(1);
+      });
     });
   });
 };

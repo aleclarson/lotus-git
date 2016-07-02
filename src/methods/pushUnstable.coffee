@@ -1,5 +1,6 @@
 
 Repository = require "git-repo"
+Promise = require "Promise"
 os = require "os"
 
 # TODO: Run the 'build' phase of lotus.
@@ -7,7 +8,7 @@ module.exports = (args) ->
 
   options =
     force: args.force ? args.f
-    remote: args.remote or arg.r or "origin"
+    remote: args.remote or args.r or "origin"
     message: args.m
 
   repo = Repository process.cwd()
@@ -15,7 +16,8 @@ module.exports = (args) ->
   repo.stageFiles "*"
 
   .then ->
-    Promise.assert "No changes were staged!", repo.isStaged()
+    repo.isStaged()
+    .assert "No changes were staged!"
 
   .then ->
 
@@ -38,8 +40,12 @@ module.exports = (args) ->
 
     .fail (error) ->
 
-      # Force an upstream branch to exist. Is this possibly dangerous?
-      if /^fatal: The current branch [^\s]+ has no upstream branch/.test error.message
+      log.moat 1
+      log.red error.stack
+      log.moat 1
+
+      # Force an upstream branch to exist.
+      if /The current branch [^\s]+ has no upstream branch/.test error.message
         return repo.pushBranch
           force: options.force
           remote: options.remote
@@ -53,7 +59,9 @@ module.exports = (args) ->
 
       .then (currentBranch) ->
 
-        repo.getHead currentBranch, options.remote
+        repo.getHead currentBranch,
+          remote: options.remote
+          message: yes
 
         .then (commit) ->
           log.moat 1

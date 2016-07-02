@@ -15,8 +15,8 @@ module.exports = (options) ->
   git.assertRepo modulePath
 
   .then ->
-    Promise.assert "The current branch cannot have any uncommitted changes!", ->
-      git.isClean modulePath
+    git.isClean modulePath
+    .assert "The current branch cannot have any uncommitted changes!"
 
   .then ->
 
@@ -63,13 +63,13 @@ module.exports = (options) ->
         log.moat 0
         log.gray.dim "No changes were detected."
         log.moat 1
-        return exec "git reset", cwd: modulePath
+        return exec.async "git reset", cwd: modulePath
         .then -> { error: "empty" }
 
       git.unstageFiles modulePath, "*"
 
       .then -> # We must use 'git commit' to conclude the merge.
-        exec "git commit", cwd: modulePath
+        exec.async "git commit", cwd: modulePath
 
       .then ->
         git.stageFiles modulePath, "*"

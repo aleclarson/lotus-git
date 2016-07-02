@@ -14,9 +14,7 @@ module.exports = function(options) {
   theirs = options._.shift();
   force = options.force != null ? options.force : options.force = options.f;
   return git.assertRepo(modulePath).then(function() {
-    return Promise.assert("The current branch cannot have any uncommitted changes!", function() {
-      return git.isClean(modulePath);
-    });
+    return git.isClean(modulePath).assert("The current branch cannot have any uncommitted changes!");
   }).then(function() {
     if (!theirs) {
       log.moat(1);
@@ -68,7 +66,7 @@ module.exports = function(options) {
         log.moat(0);
         log.gray.dim("No changes were detected.");
         log.moat(1);
-        return exec("git reset", {
+        return exec.async("git reset", {
           cwd: modulePath
         }).then(function() {
           return {
@@ -77,7 +75,7 @@ module.exports = function(options) {
         });
       }
       return git.unstageFiles(modulePath, "*").then(function() {
-        return exec("git commit", {
+        return exec.async("git commit", {
           cwd: modulePath
         });
       }).then(function() {

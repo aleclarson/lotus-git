@@ -1,5 +1,6 @@
 
 Promise = require "Promise"
+assert = require "assert"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
@@ -10,55 +11,48 @@ printStatus = require "../utils/printStatus"
 
 module.exports = (options) ->
 
-  { Module } = lotus
+  if moduleName = options._.shift()
 
-  modulePath = options._.shift()
+    return lotus.Module.load moduleName
 
-  if modulePath
+    .then (module) ->
+      assert git.isRepo(module.path), "Expected a repository: '#{module.path}'"
 
-    modulePath = Module.resolvePath modulePath
+      git.getStatus module.path
 
-    return git.assertRepo modulePath
-
-    .then ->
-      git.getStatus modulePath,
-        raw: options.names isnt yes
-
-    .then (results) ->
-      moduleName = Path.relative lotus.path, modulePath
-      printStatus moduleName, results
-
-    .fail (error) ->
-      throw error
+      .then (status) ->
+        printStatus module.name, status
 
   log.clear()
   log.moat 1 if options.names
 
-  mods = Module.crawl lotus.path
+  lotus.Module.crawl lotus.path
 
-  log.moat 1
-  log.white "Found "
-  log.yellow mods.length
-  log.white " modules in "
-  log.cyan lotus.path
-  log.moat 1
+  .then (modules) ->
 
-  Promise.map mods, (mod) ->
+    log.moat 1
+    log.white "Found "
+    log.yellow modules.length
+    log.white " modules in "
+    log.cyan lotus.path
+    log.moat 1
 
-    return if not git.isRepo mod.path
+    Promise.chain modules, (module) ->
 
-    git.getStatus mod.path,
-      raw: options.names isnt yes
+      return if not git.isRepo module.path
 
-    .then (status) ->
+      git.getStatus module.path,
+        raw: options.names
 
-      if options.names
-        return if not status.length
-        log.moat 0
-        log.bold mod.name
-        return
+      .then (status) ->
 
-      printStatus mod.name, status
+        if options.names
+          return if not status.length
+          log.moat 0
+          log.bold module.name
+          return
 
-  .then ->
-    log.moat 1 if options.names
+        printStatus module.name, status
+
+    .then ->
+      log.moat 1 if options.names

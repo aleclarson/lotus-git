@@ -1,6 +1,8 @@
-var Repository, getDateString, os;
+var Promise, Repository, getDateString, os;
 
 Repository = require("git-repo");
+
+Promise = require("Promise");
 
 os = require("os");
 
@@ -8,12 +10,12 @@ module.exports = function(args) {
   var options, ref, repo;
   options = {
     force: (ref = args.force) != null ? ref : args.f,
-    remote: args.remote || arg.r || "origin",
+    remote: args.remote || args.r || "origin",
     message: args.m
   };
   repo = Repository(process.cwd());
   return repo.stageFiles("*").then(function() {
-    return Promise.assert("No changes were staged!", repo.isStaged());
+    return repo.isStaged().assert("No changes were staged!");
   }).then(function() {
     var message;
     message = getDateString();
@@ -29,7 +31,10 @@ module.exports = function(args) {
       force: options.force,
       remote: options.remote
     }).fail(function(error) {
-      if (/^fatal: The current branch [^\s]+ has no upstream branch/.test(error.message)) {
+      log.moat(1);
+      log.red(error.stack);
+      log.moat(1);
+      if (/The current branch [^\s]+ has no upstream branch/.test(error.message)) {
         return repo.pushBranch({
           force: options.force,
           remote: options.remote,
@@ -39,7 +44,10 @@ module.exports = function(args) {
       throw error;
     }).then(function() {
       return repo.getBranch().then(function(currentBranch) {
-        return repo.getHead(currentBranch, options.remote).then(function(commit) {
+        return repo.getHead(currentBranch, {
+          remote: options.remote,
+          message: true
+        }).then(function(commit) {
           log.moat(1);
           log.green("Push success! ");
           log.gray.dim(options.remote + "/" + currentBranch);

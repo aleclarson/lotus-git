@@ -1,4 +1,4 @@
-var Path, Promise, errorConfig, git, log, printBranches, sync;
+var Path, Promise, git, log, printBranches, sync;
 
 Promise = require("Promise");
 
@@ -11,18 +11,14 @@ git = require("git-utils");
 log = require("log");
 
 module.exports = function(options) {
-  var Module, mod, mods, moduleName, modulePath;
-  Module = lotus.Module;
-  modulePath = options._.shift();
-  if (modulePath) {
-    modulePath = Module.resolvePath(modulePath);
-    moduleName = Path.basename(modulePath);
-    mod = Module(moduleName);
-    return printBranches(mod);
+  var moduleName;
+  if (moduleName = options._.shift()) {
+    return lotus.Module.load(moduleName).then(printBranches);
   }
-  mods = Module.crawl(lotus.path);
-  return Promise.chain(mods, function(mod) {
-    return printBranches(mod);
+  return lotus.Module.crawl(lotus.path).then(function(mods) {
+    return Promise.chain(mods, function(mod) {
+      return printBranches(mod);
+    });
   });
 };
 
@@ -38,13 +34,7 @@ printBranches = function(mod) {
     log.gray.dim(branches.join("\n"));
     log.popIndent();
     return log.moat(1);
-  }).fail(function(error) {
-    return mod.reportError(error, errorConfig);
   });
-};
-
-errorConfig = {
-  quiet: ["fatal: Not a git repository (or any of the parent directories): .git"]
 };
 
 //# sourceMappingURL=../../../map/src/methods/branches.map
