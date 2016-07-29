@@ -24,7 +24,7 @@ module.exports = (args) ->
     message = getDateString()
 
     if options.message
-      message += os.EOL + message
+      message += os.EOL + options.message
 
     repo.commit message
 

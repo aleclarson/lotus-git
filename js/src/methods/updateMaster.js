@@ -43,4 +43,4 @@ module.exports = function(options) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/methods/updateMaster.map
+//# sourceMappingURL=map/updateMaster.map

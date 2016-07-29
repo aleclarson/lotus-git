@@ -1,7 +1,7 @@
 {
   "version": 3,
   "file": "pushVersion.js",
-  "sourceRoot": "../../../src/methods",
+  "sourceRoot": "../../../../src/methods",
   "sources": [
     "pushVersion.coffee"
   ],

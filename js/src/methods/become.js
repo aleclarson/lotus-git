@@ -93,4 +93,4 @@ module.exports = function(options) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/methods/become.map
+//# sourceMappingURL=map/become.map

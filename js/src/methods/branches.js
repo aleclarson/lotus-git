@@ -37,4 +37,4 @@ printBranches = function(mod) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/methods/branches.map
+//# sourceMappingURL=map/branches.map

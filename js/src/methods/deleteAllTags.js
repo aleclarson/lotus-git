@@ -1,8 +1,10 @@
-var Path, Promise, exec, git, isType, log, sync;
+var Path, Promise, assert, exec, git, isType, log, sync;
 
 Promise = require("Promise");
 
 isType = require("isType");
+
+assert = require("assert");
 
 Path = require("path");
 
@@ -46,4 +48,4 @@ module.exports = function(options) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/methods/deleteAllTags.map
+//# sourceMappingURL=map/deleteAllTags.map

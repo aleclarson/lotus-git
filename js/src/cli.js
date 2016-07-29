@@ -10,4 +10,4 @@ module.exports = function(options) {
   });
 };
 
-//# sourceMappingURL=../../map/src/cli.map
+//# sourceMappingURL=map/cli.map

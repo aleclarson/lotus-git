@@ -1,6 +1,7 @@
 
 Promise = require "Promise"
 isType = require "isType"
+assert = require "assert"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"

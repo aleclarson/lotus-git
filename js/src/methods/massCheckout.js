@@ -77,4 +77,4 @@ module.exports = function(options) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/methods/massCheckout.map
+//# sourceMappingURL=map/massCheckout.map

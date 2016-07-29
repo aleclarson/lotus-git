@@ -41,6 +41,9 @@ module.exports = function(options) {
       if (!git.isRepo(module.path)) {
         return;
       }
+      if (lotus.isModuleIgnored(module.name)) {
+        return;
+      }
       return git.getStatus(module.path, {
         raw: options.names
       }).then(function(status) {
@@ -62,4 +65,4 @@ module.exports = function(options) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/methods/status.map
+//# sourceMappingURL=map/status.map

@@ -59,4 +59,4 @@ module.exports = function(args) {
   });
 };
 
-//# sourceMappingURL=../../../map/src/methods/pushVersion.map
+//# sourceMappingURL=map/pushVersion.map

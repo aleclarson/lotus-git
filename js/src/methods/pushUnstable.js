@@ -20,7 +20,7 @@ module.exports = function(args) {
     var message;
     message = getDateString();
     if (options.message) {
-      message += os.EOL + message;
+      message += os.EOL + options.message;
     }
     return repo.commit(message);
   }).then(function() {
@@ -101,4 +101,4 @@ getDateString = function() {
   return array.join("");
 };
 
-//# sourceMappingURL=../../../map/src/methods/pushUnstable.map
+//# sourceMappingURL=map/pushUnstable.map

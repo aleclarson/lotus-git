@@ -40,6 +40,7 @@ module.exports = (options) ->
     Promise.chain modules, (module) ->
 
       return if not git.isRepo module.path
+      return if lotus.isModuleIgnored module.name
 
       git.getStatus module.path,
         raw: options.names
