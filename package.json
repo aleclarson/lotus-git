@@ -1,7 +1,7 @@
 {
   "name": "lotus-git",
   "version": "1.0.0",
-  "main": "js/src/index",
+  "main": "js/index",
   "peerDependencies": {
     "lotus": "3.1.x"
   },

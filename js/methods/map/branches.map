@@ -1,7 +1,7 @@
 {
   "version": 3,
   "file": "branches.js",
-  "sourceRoot": "../../../../src/methods",
+  "sourceRoot": "../../../src/methods",
   "sources": [
     "branches.coffee"
   ],
