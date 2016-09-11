@@ -23,7 +23,6 @@ module.exports = (options) ->
       .then (status) ->
         printStatus module.name, status
 
-  log.clear()
   log.moat 1 if options.names
 
   lotus.Module.crawl lotus.path
