@@ -2,11 +2,17 @@
   "name": "lotus-git",
   "version": "1.0.0",
   "main": "js/index",
+  "plugins": [
+    "lotus-coffee"
+  ],
+  "scripts": {
+    "build": "coffee -cb -o js src",
+    "postinstall": "postinstall-build js 'npm run build'"
+  },
   "peerDependencies": {
     "lotus": "3.2.x"
   },
   "dependencies": {
-    "Promise": "aleclarson/Promise#1.0.0",
     "assert": "aleclarson/assert#1.0.0",
     "exec": "aleclarson/exec#1.0.0",
     "git-repo": "aleclarson/git-repo#1.0.0",
@@ -14,17 +20,15 @@
     "hasKeys": "aleclarson/hasKeys#1.0.0",
     "in-array": "aleclarson/in-array#1.0.0",
     "isType": "aleclarson/isType#1.0.0",
-    "log": "aleclarson/log#1.0.0",
     "node-semver": "aleclarson/node-semver#5.1.0",
+    "postinstall-build": "0.2.x",
     "sync": "aleclarson/sync#1.0.0"
   },
-  "lotus": {
-    "plugins": [
-      "lotus-coffee"
-    ],
-    "implicitDependencies": [
-      "os",
-      "path"
-    ]
-  }
+  "devDependencies": {
+    "coffee-script": "1.9.x"
+  },
+  "implicitDependencies": [
+    "os",
+    "path"
+  ]
 }
