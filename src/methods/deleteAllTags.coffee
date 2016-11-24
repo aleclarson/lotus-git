@@ -1,7 +1,6 @@
 
 Promise = require "Promise"
 isType = require "isType"
-assert = require "assert"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
@@ -11,7 +10,8 @@ log = require "log"
 module.exports = (options) ->
 
   moduleName = options._.shift()
-  assert moduleName, "Must provide a 'moduleName'!"
+  unless moduleName
+    throw Error "Must provide a 'moduleName'!"
 
   lotus.Module.load moduleName
 

@@ -1,6 +1,5 @@
 
 Promise = require "Promise"
-assert = require "assert"
 Path = require "path"
 sync = require "sync"
 exec = require "exec"
@@ -16,7 +15,8 @@ module.exports = (options) ->
     return lotus.Module.load moduleName
 
     .then (module) ->
-      assert git.isRepo(module.path), "Expected a repository: '#{module.path}'"
+      unless git.isRepo module.path
+        throw Error "Expected a repository: '#{module.path}'"
 
       git.getStatus module.path
 

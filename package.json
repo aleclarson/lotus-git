@@ -13,7 +13,6 @@
     "lotus": "3.2.x"
   },
   "dependencies": {
-    "assert": "aleclarson/assert#1.0.0",
     "exec": "aleclarson/exec#1.0.0",
     "git-repo": "aleclarson/git-repo#1.0.0",
     "git-utils": "aleclarson/git-utils#1.0.0",
