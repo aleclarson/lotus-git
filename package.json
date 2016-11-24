@@ -13,14 +13,17 @@
     "lotus": "3.2.x"
   },
   "dependencies": {
-    "exec": "aleclarson/exec#1.0.0",
-    "git-repo": "aleclarson/git-repo#1.0.0",
-    "git-utils": "aleclarson/git-utils#1.0.0",
+    "Promise": "aleclarson/Promise#2.1.1",
+    "assert": "aleclarson/assert#1.0.1",
+    "exec": "aleclarson/exec#1.0.1",
+    "git-repo": "aleclarson/git-repo#1.0.1",
+    "git-utils": "aleclarson/git-utils#1.1.2",
     "hasKeys": "aleclarson/hasKeys#1.0.0",
     "in-array": "aleclarson/in-array#1.0.0",
-    "isType": "aleclarson/isType#1.0.0",
+    "isType": "aleclarson/isType#1.0.1",
+    "log": "aleclarson/log#2.1.0",
     "node-semver": "aleclarson/node-semver#5.1.0",
-    "sync": "aleclarson/sync#1.0.0"
+    "sync": "aleclarson/sync#1.0.1"
   },
   "implicitDependencies": [
     "os",
